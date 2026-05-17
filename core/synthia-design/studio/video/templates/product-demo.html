@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Demo Template</title>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    #stage {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, #0a1108 0%, #1a2a18 100%);
+      font-family: 'Suisse BP', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      width: 1920px;
+      height: 1080px;
+    }
+
+    /* Hero section */
+    .hero {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+    }
+
+    .hero-content {
+      text-align: center;
+      color: #ffffff;
+      z-index: 10;
+    }
+
+    .hero-title {
+      font-size: 72px;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 30px;
+    }
+
+    .hero-subtitle {
+      font-size: 36px;
+      font-weight: 400;
+      color: #c4963c;
+      margin-bottom: 50px;
+      opacity: 0;
+    }
+
+    /* Product screenshot sections */
+    .demo-section {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+    }
+
+    .demo-screenshot {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+    }
+
+    /* Split screen comparison */
+    .split-screen-container {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      opacity: 0;
+    }
+
+    .before-section {
+      position: relative;
+      width: 50%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .after-section {
+      position: relative;
+      width: 50%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .before-video, .after-video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Feature highlight boxes */
+    .feature-box {
+      position: absolute;
+      background: rgba(196, 150, 60, 0.1);
+      border: 2px solid #c4963c;
+      border-radius: 16px;
+      padding: 30px;
+      color: #ffffff;
+      opacity: 0;
+      backdrop-filter: blur(10px);
+    }
+
+    .feature-box-title {
+      font-size: 32px;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: #c4963c;
+    }
+
+    .feature-box-desc {
+      font-size: 20px;
+      line-height: 1.5;
+    }
+
+    /* Feature 1 */
+    .feature-1 {
+      left: 100px;
+      top: 300px;
+      width: 400px;
+    }
+
+    /* Feature 2 */
+    .feature-2 {
+      right: 100px;
+      bottom: 300px;
+      width: 400px;
+    }
+
+    /* Results section */
+    .results-container {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      opacity: 0;
+    }
+
+    .result-stat {
+      text-align: center;
+      color: #ffffff;
+      opacity: 0;
+    }
+
+    .result-number {
+      font-size: 96px;
+      font-weight: 700;
+      color: #c4963c;
+      line-height: 1;
+      margin-bottom: 20px;
+    }
+
+    .result-label {
+      font-size: 28px;
+      font-weight: 500;
+    }
+
+    /* CTA Section */
+    .cta-section {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      background: linear-gradient(135deg, #0a1108 0%, #1a2a18 100%);
+    }
+
+    .cta-heading {
+      font-size: 60px;
+      font-weight: 600;
+      color: #ffffff;
+      margin-bottom: 30px;
+    }
+
+    .cta-button {
+      padding: 25px 70px;
+      background: #c4963c;
+      color: #0a1108;
+      border: none;
+      border-radius: 12px;
+      font-size: 32px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 20px 60px rgba(196, 150, 60, 0.3);
+      opacity: 0;
+    }
+
+    .cta-button:hover {
+      box-shadow: 0 30px 80px rgba(196, 150, 60, 0.5);
+    }
+
+    /* Audio elements */
+    audio {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="stage"
+    data-composition-id="product-demo-v1"
+    data-width="1920"
+    data-height="1080"
+    data-frame-rate="30"
+    data-duration="60">
+
+    <!-- AUDIO TRACKS -->
+    <audio
+      src="assets/audio/corporate-bg-music.mp3"
+      data-start="0"
+      data-duration="60"
+      data-track-index="-2"
+      data-volume="0.4"
+    ></audio>
+
+    <audio
+      src="assets/audio/voiceover-demo.mp3"
+      data-start="0"
+      data-duration="55"
+      data-track-index="-1"
+      data-volume="0.9"
+    ></audio>
+
+    <!-- VIDEO LAYERS -->
+    <!-- Hero Section [0-4s] -->
+    <div class="hero" data-start="0" data-duration="4">
+      <div class="hero-content">
+        <h1 class="hero-title">Transform Your Workflow</h1>
+        <p class="hero-subtitle">See how in 90 seconds</p>
+      </div>
+    </div>
+
+    <!-- Split Screen Comparison [4-14s] -->
+    <div class="split-screen-container" data-start="4" data-duration="10">
+      <div class="before-section">
+        <video
+          class="before-video"
+          src="assets/video/old-workflow.mp4"
+          data-start="4"
+          data-duration="10"
+        ></video>
+        <div style="position: absolute; top: 30px; left: 30px; background: rgba(0,0,0,0.6); padding: 20px 30px; border-radius: 8px; color: white; font-size: 28px; font-weight: 600;">
+          Before
+        </div>
+      </div>
+      <div class="after-section">
+        <video
+          class="after-video"
+          src="assets/video/new-workflow.mp4"
+          data-start="4"
+          data-duration="10"
+        ></video>
+        <div style="position: absolute; top: 30px; right: 30px; background: rgba(196, 150, 60, 0.8); padding: 20px 30px; border-radius: 8px; color: #0a1108; font-size: 28px; font-weight: 600;">
+          After
+        </div>
+      </div>
+    </div>
+
+    <!-- Feature 1 Highlight [14-25s] -->
+    <div class="demo-section" data-start="14" data-duration="11">
+      <video
+        class="demo-screenshot"
+        src="assets/video/feature-1-demo.mp4"
+        data-start="14"
+        data-duration="11"
+      ></video>
+      <div class="feature-box feature-1">
+        <div class="feature-box-title">Real-time Collaboration</div>
+        <div class="feature-box-desc">
+          Teams work together seamlessly, no waiting for syncs.
+        </div>
+      </div>
+    </div>
+
+    <!-- Feature 2 Highlight [25-36s] -->
+    <div class="demo-section" data-start="25" data-duration="11">
+      <video
+        class="demo-screenshot"
+        src="assets/video/feature-2-demo.mp4"
+        data-start="25"
+        data-duration="11"
+      ></video>
+      <div class="feature-box feature-2">
+        <div class="feature-box-title">Instant Insights</div>
+        <div class="feature-box-desc">
+          Analytics at a glance. Make better decisions faster.
+        </div>
+      </div>
+    </div>
+
+    <!-- Results/Metrics Section [36-50s] -->
+    <div class="results-container" data-start="36" data-duration="14">
+      <div class="result-stat">
+        <div class="result-number">3x</div>
+        <div class="result-label">Faster Delivery</div>
+      </div>
+      <div class="result-stat">
+        <div class="result-number">87%</div>
+        <div class="result-label">Time Saved</div>
+      </div>
+      <div class="result-stat">
+        <div class="result-number">2M+</div>
+        <div class="result-label">Happy Users</div>
+      </div>
+    </div>
+
+    <!-- CTA Section [50-60s] -->
+    <div class="cta-section" data-start="50" data-duration="10">
+      <h2 class="cta-heading">Ready to transform?</h2>
+      <button class="cta-button">Start Free Trial</button>
+    </div>
+  </div>
+
+  <script>
+    const timeline = gsap.timeline();
+
+    // [0-4s] Hero fade in
+    timeline.from('.hero', {
+      opacity: 0,
+      duration: 0.8,
+    }, '0');
+
+    timeline.from('.hero-title', {
+      opacity: 0,
+      y: 40,
+      duration: 0.6,
+      ease: 'power3.out',
+    }, '0.2');
+
+    timeline.from('.hero-subtitle', {
+      opacity: 0,
+      y: 20,
+      duration: 0.5,
+      ease: 'power2.out',
+    }, '0.4');
+
+    // [4-14s] Split screen fades in
+    timeline.from('.split-screen-container', {
+      opacity: 0,
+      duration: 0.5,
+    }, '4');
+
+    // [14-25s] Feature 1 with highlight box
+    timeline.from('.demo-section', {
+      opacity: 0,
+      duration: 0.5,
+    }, '14');
+
+    timeline.from('.feature-1', {
+      opacity: 0,
+      x: -40,
+      duration: 0.6,
+      ease: 'power3.out',
+    }, '14.3');
+
+    // [25-36s] Feature 2 transition
+    timeline.to('.demo-section', {
+      opacity: 0,
+      duration: 0.5,
+    }, '25');
+
+    timeline.from('.demo-section', {
+      opacity: 0,
+      duration: 0.5,
+    }, '25.3');
+
+    timeline.from('.feature-2', {
+      opacity: 0,
+      x: 40,
+      duration: 0.6,
+      ease: 'power3.out',
+    }, '25.6');
+
+    // [36-50s] Results animation
+    timeline.from('.results-container', {
+      opacity: 0,
+      duration: 0.5,
+    }, '36');
+
+    timeline.from('.result-stat', {
+      opacity: 0,
+      y: 30,
+      stagger: 0.2,
+      duration: 0.5,
+      ease: 'power2.out',
+    }, '36.3');
+
+    // Animate number counters
+    timeline.from('.result-number', {
+      textContent: 0,
+      snap: { textContent: 1 },
+      stagger: 0.2,
+      duration: 1,
+    }, '36.8');
+
+    // [50-60s] CTA fade in
+    timeline.from('.cta-section', {
+      opacity: 0,
+      duration: 0.5,
+    }, '50');
+
+    timeline.from('.cta-heading', {
+      opacity: 0,
+      y: 30,
+      duration: 0.5,
+      ease: 'power3.out',
+    }, '50.2');
+
+    timeline.from('.cta-button', {
+      opacity: 0,
+      scale: 0.9,
+      duration: 0.5,
+      ease: 'back.out(1.2)',
+    }, '50.5');
+
+    // CTA button pulse
+    timeline.to('.cta-button', {
+      boxShadow: '0 30px 80px rgba(196, 150, 60, 0.6)',
+      duration: 0.4,
+      repeat: 1,
+      yoyo: true,
+    }, '52');
+
+    // Respect reduced motion
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      gsap.globalTimeline.timeScale(0.2);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+# Land the Plane™ v1.0 — Workflow 05
+# Deploy FastAPI Python backend to Railway production on push to main.
+name: Deploy → Railway (API, Production)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/api/**'
+      - 'agents/**'
+      - 'harness/**'
+      - 'packages/lightning/**'
+      - 'packages/lightrag/**'
+      - 'packages/smart-router/**'
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-railway-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Deploy FastAPI backend → Railway production
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/railwayapp/cli:latest
+    env:
+      RAILWAY_TOKEN:   ${{ secrets.RAILWAY_TOKEN }}
+      RAILWAY_SVC_ID:  ${{ secrets.RAILWAY_SERVICE_ID }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+
+      - name: Syntax check before deploy
+        run: |
+          for f in $(find agents harness packages apps/api -name "*.py" | grep -v __pycache__); do
+            python -c "import ast; ast.parse(open('$f').read())" || exit 1
+          done
+          echo "✅ All Python files clean"
+
+      - name: Deploy to Railway
+        run: railway up --service=${{ env.RAILWAY_SVC_ID }} --detach
+
+      - name: Notify Telegram — success
+        if: success()
+        uses: appleboy/telegram-action@master
+        with:
+          to:      ${{ secrets.TELEGRAM_CHAT_ID }}
+          token:   ${{ secrets.TELEGRAM_TOKEN }}
+          message: |
+            ✅ *Akash Engine — API deployed to Railway*
+            Service: `${{ secrets.RAILWAY_SERVICE_ID }}`
+            Commit: `${{ github.sha }}`
+            By: ${{ github.actor }}
+
+      - name: Notify Telegram — failure
+        if: failure()
+        uses: appleboy/telegram-action@master
+        with:
+          to:      ${{ secrets.TELEGRAM_CHAT_ID }}
+          token:   ${{ secrets.TELEGRAM_TOKEN }}
+          message: |
+            🔴 *Akash Engine — API deploy FAILED*
+            Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}

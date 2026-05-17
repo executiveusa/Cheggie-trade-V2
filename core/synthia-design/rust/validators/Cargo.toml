@@ -1,0 +1,11 @@
+[package]
+name = "cynthia-validator"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+regex = { workspace = true }
+serde = { workspace = true }
+serde_yaml = { workspace = true }
+anyhow = { workspace = true }
+glob = { workspace = true }

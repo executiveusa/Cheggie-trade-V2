@@ -1,0 +1,62 @@
+# Land the Plane™ v1.0 — Workflow 07
+# Squash-merge PRs from bots (Dependabot, github-actions[bot], LANE pipeline)
+# when all quality gates are green. No human needed for agent-generated PRs.
+name: Auto-merge
+
+on:
+  workflow_run:
+    workflows: ["Quality Gate"]
+    types: [completed]
+  pull_request_review:
+    types: [submitted]
+
+jobs:
+  auto-merge:
+    name: Auto-merge when gates green
+    runs-on: ubuntu-latest
+    if: >
+      github.event.workflow_run.conclusion == 'success' ||
+      (github.event.review.state == 'approved' &&
+       contains(fromJSON('["dependabot[bot]","github-actions[bot]"]'),
+                github.event.pull_request.user.login))
+    permissions:
+      pull-requests: write
+      contents:      write
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: prs } = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo:  context.repo.repo,
+              state: 'open',
+            });
+
+            for (const pr of prs) {
+              const isBotPr = ['dependabot[bot]', 'github-actions[bot]'].includes(pr.user.login);
+              const isLanePr = pr.title.startsWith('[LANE]');
+
+              if (!isBotPr && !isLanePr) continue;
+
+              const { data: checks } = await github.rest.checks.listForRef({
+                owner: context.repo.owner,
+                repo:  context.repo.repo,
+                ref:   pr.head.sha,
+              });
+
+              const allGreen = checks.check_runs.every(
+                c => c.status === 'completed' && c.conclusion === 'success'
+              );
+
+              if (allGreen) {
+                await github.rest.pulls.merge({
+                  owner:        context.repo.owner,
+                  repo:         context.repo.repo,
+                  pull_number:  pr.number,
+                  merge_method: 'squash',
+                  commit_title: `${pr.title} [auto-merged]`,
+                });
+                console.log(`✅ Auto-merged PR #${pr.number}: ${pr.title}`);
+              }
+            }

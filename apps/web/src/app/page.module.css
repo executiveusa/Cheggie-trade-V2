@@ -1,0 +1,257 @@
+/* ── Hero ──────────────────────────────────────────────────────── */
+.hero {
+  min-height: calc(100vh - 60px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.heroLayout {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: var(--sp-6);
+  align-items: center;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: var(--sp-7) var(--sp-4);
+  width: 100%;
+}
+
+.heroLeft {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  animation: fadeUp 0.9s var(--ease) both;
+}
+
+.eyebrow {
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  max-width: none;
+}
+
+.headline {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(3rem, 5.5vw, 5.6rem);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: var(--text-primary);
+}
+
+.headline em {
+  font-style: italic;
+  color: var(--accent);
+}
+
+.subhead {
+  font-size: 1.05rem;
+  font-weight: 300;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  max-width: 44ch;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  flex-wrap: wrap;
+  padding-top: var(--sp-2);
+}
+
+.ctaPrimary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 52px;
+  padding: 0 var(--sp-4);
+  background: var(--accent);
+  color: var(--canvas);
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-radius: var(--radius);
+  transition: background 0.2s var(--ease);
+}
+
+.ctaPrimary:hover {
+  background: var(--accent-dim);
+}
+
+.ctaSecondary {
+  display: inline-flex;
+  align-items: center;
+  min-height: 52px;
+  padding: 0 var(--sp-4);
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  font-weight: 300;
+  border: 1px solid var(--border-02);
+  border-radius: var(--radius);
+  transition: color 0.2s var(--ease), border-color 0.2s var(--ease);
+}
+
+.ctaSecondary:hover {
+  color: var(--text-primary);
+  border-color: var(--text-tertiary);
+}
+
+/* ── Ticker board ────────────────────────────────────────────── */
+.heroRight {
+  display: flex;
+  justify-content: flex-end;
+  animation: fadeUp 1s var(--ease) 0.15s both;
+}
+
+.tickerBoard {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-3);
+  width: 260px;
+  display: flex;
+  flex-direction: column;
+}
+
+.tickerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--sp-2) 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.tickerRow:last-child {
+  border-bottom: none;
+}
+
+.tickerSymbol {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--text-primary);
+  letter-spacing: 0.04em;
+}
+
+.tickerChange {
+  font-size: 0.8125rem;
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+}
+
+.positive { color: var(--success); }
+.negative { color: var(--danger); }
+
+/* ── Scroll indicator ────────────────────────────────────────── */
+.scrollIndicator {
+  position: absolute;
+  bottom: var(--sp-4);
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.scrollIndicator span {
+  display: block;
+  width: 1px;
+  height: 48px;
+  background: linear-gradient(to bottom, var(--border-02), transparent);
+  margin: 0 auto;
+}
+
+/* ── Value Props ─────────────────────────────────────────────── */
+.props {
+  padding: var(--sp-7) 0;
+}
+
+.propsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.prop {
+  padding: var(--sp-5) var(--sp-4);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.prop:last-child {
+  border-right: none;
+}
+
+.propNumber {
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+}
+
+.propTitle {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 400;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.propBody {
+  font-size: 0.9375rem;
+  color: var(--text-secondary);
+  font-weight: 300;
+  line-height: 1.65;
+  max-width: 36ch;
+}
+
+/* ── Statement ───────────────────────────────────────────────── */
+.statement {
+  padding: var(--sp-7) 0;
+}
+
+.statement .container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sp-5);
+}
+
+.quote {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-style: italic;
+  font-size: clamp(2rem, 4vw, 3.4rem);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  max-width: 22ch;
+  border: none;
+  quotes: none;
+}
+
+/* ── Responsive ──────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .heroLayout {
+    grid-template-columns: 1fr;
+    gap: var(--sp-5);
+  }
+  .heroRight { justify-content: flex-start; }
+}
+
+@media (max-width: 768px) {
+  .propsGrid { grid-template-columns: 1fr; }
+  .prop { border-right: none; border-bottom: 1px solid var(--border); }
+  .prop:last-child { border-bottom: none; }
+  .heroLayout { padding: var(--sp-5) var(--sp-3); }
+  .tickerBoard { width: 100%; max-width: 320px; }
+}
