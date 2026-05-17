@@ -1,0 +1,323 @@
+# VIDEO ANTI-PATTERNS REGISTRY — SYNTHIA VIDEO STUDIO
+# Machine-readable banned patterns for hyperframes compositions
+# Auto-validated by linter (hyperframes lint)
+
+version: 1.0.0
+date_updated: 2026-04-19
+authority: Synthia Design Authority
+
+---
+
+# CATEGORY 1: TYPOGRAPHY VIOLATIONS
+typography:
+  banned_fonts:
+    - name: Inter
+      severity: BLOCKER
+      reason: Generic, overused in low-quality video
+      fix: Use Suisse BP, Futura, DM Sans, or approved list
+    - name: Roboto
+      severity: BLOCKER
+      reason: Android default, lacks premium feel
+      fix: Use Suisse BP, TT Norms, or ABC Neutral
+    - name: Arial
+      severity: BLOCKER
+      reason: Web-safe relic, no character
+      fix: Use system fonts or purchased typeface
+    - name: Helvetica
+      severity: BLOCKER
+      reason: Overused, dated appearance
+      fix: Use Futura or modern sans-serif
+    - name: Open Sans
+      severity: BLOCKER
+      reason: Corporate commodity
+      fix: Use Suisse BP or DM Sans
+    - name: Montserrat
+      severity: BLOCKER
+      reason: Geometric overuse, low quality
+      fix: Use approved font stack
+    - name: Poppins
+      severity: BLOCKER
+      reason: Childish, unprofessional
+      fix: Use professional typeface
+    - name: Lato
+      severity: BLOCKER
+      reason: Generic, lacks personality
+      fix: Use SF Pro, TT Norms, or approved list
+
+  undersized_text:
+    - size_px: "<28"
+      severity: BLOCKER
+      reason: Unreadable in video (mobile viewing)
+      fix: Minimum 32pt for body text, 48pt for headlines
+
+  poor_contrast:
+    - ratio: "<4.5"
+      severity: BLOCKER
+      reason: WCAG AA non-compliance, accessibility failure
+      fix: Ensure 4.5:1 (text on background) or 3:1 (large text)
+
+  missing_hierarchy:
+    - severity: WARNING
+      reason: No clear visual distinction between heading/body/caption
+      fix: Use size + weight + color to create hierarchy
+
+---
+
+# CATEGORY 2: COLOR PALETTE VIOLATIONS
+colors:
+  banned_palettes:
+    - name: Purple gradient
+      hex_examples: ["#8B5CF6", "#A78BFA", "#C4B5FD"]
+      severity: BLOCKER
+      reason: Prohibited by Synthia doctrine (generic, overused)
+      fix: Use gold (#c4963c) + sage (#5a7a52) + deep (#0a1108)
+
+    - name: Neon colors
+      hex_examples: ["#00FF00", "#FF00FF", "#00FFFF"]
+      severity: BLOCKER
+      reason: Artificial, low premium feel, eye-strain
+      fix: Use natural palette (gold, sage, deep tones)
+
+    - name: Bright cyan/pink gradients
+      hex_examples: ["#00D4FF", "#FF1493"]
+      severity: BLOCKER
+      reason: Generic tech/SaaS aesthetic, no differentiation
+      fix: Use Synthia palette
+
+  approved_palette:
+    - color: Primary
+      hex: "#c4963c"
+      name: Gold
+      use: CTAs, highlights, key elements
+    - color: Secondary
+      hex: "#5a7a52"
+      name: Sage
+      use: Backgrounds, overlays, accents
+    - color: Dark
+      hex: "#0a1108"
+      name: Deep
+      use: Text, backgrounds, depth
+    - color: Accent
+      hex: "#2d4a24"
+      name: Dark Sage
+      use: Hover states, borders
+
+  custom_colors_permitted: false
+  reason: Brand consistency, prevents "design by committee"
+
+---
+
+# CATEGORY 3: MOTION VIOLATIONS
+motion:
+  rapid_cuts:
+    - duration_threshold: "<0.3s"
+      severity: BLOCKER
+      reason: Jarring, disorienting, unprofessional
+      fix: Minimum 0.3s fade/transition, 0.5s for significant scene changes
+
+  banned_easings:
+    - easing: bounce.out
+      severity: BLOCKER
+      reason: Childish, unprofessional appearance
+      fix: Use power3.out, cubic-bezier(0.16, 1, 0.3, 1)
+
+    - easing: elastic.out
+      severity: BLOCKER
+      reason: Cartoon-like, undermines premium feel
+      fix: Use power2.out or custom easing
+
+  unmotivated_motion:
+    - severity: WARNING
+    - reason: Animation without clear purpose (decoration only)
+    - fix: Every motion must serve the narrative or UX
+
+  strobing_flashing:
+    - threshold: ">3 flashes per second"
+      severity: BLOCKER
+      reason: Photosensitivity risk, accessibility violation
+      fix: Keep flashing ≤ 3x/sec, use smooth fades instead
+
+  scroll_jacking:
+    - severity: BLOCKER
+    - reason: User should never feel "stuck" during video playback
+    - fix: Use smooth scroll or linear playback only
+
+---
+
+# CATEGORY 4: AUDIO VIOLATIONS
+audio:
+  clipped_audio:
+    - peak_db_threshold: ">-3"
+      severity: BLOCKER
+      reason: Distortion, unprofessional sound
+      fix: Peak levels at -6dB to -3dB, normalize audio
+
+  unbalanced_mix:
+    - description: VO + BG music at same level
+      severity: BLOCKER
+      reason: Muddled, unintelligible dialog
+      fix: BG music 0.4-0.6, VO 0.85-1.0
+
+  async_voiceover:
+    - description: VO ends abruptly before video ends
+      severity: WARNING
+      reason: Awkward silence, incomplete narrative
+      fix: VO should end 0.5-1.0s before final frame
+
+  missing_captions:
+    - severity: BLOCKER
+    - reason: Accessibility requirement (WCAG 2.1)
+    - fix: Generate SRT file, embed captions in video
+
+  poor_audio_quality:
+    - description: Compressed, underwater, barely audible
+      severity: BLOCKER
+      reason: Reflects poorly on brand
+      fix: Record/source high-quality audio, bit-depth ≥ 16bit 48kHz
+
+---
+
+# CATEGORY 5: COMPOSITION VIOLATIONS
+composition:
+  cluttered_layout:
+    - severity: WARNING
+    - reason: Too many elements competing for attention
+    - fix: Use negative space, hierarchy, focus on 1-2 key elements
+
+  missing_cta:
+    - severity: BLOCKER
+    - reason: Every video must have clear call-to-action
+    - fix: Add CTA button, link, or instruction in final 5 seconds
+
+  poor_safe_zones:
+    - severity: WARNING
+    - reason: Critical content cut off on mobile
+    - fix: Keep text/CTA in center 80% of frame
+
+  ungraded_footage:
+    - description: Raw B-roll looks flat, desaturated, or too bright
+      severity: WARNING
+      reason: Amateurish appearance
+      fix: Apply color grading, adjust curves, add LUT
+
+---
+
+# CATEGORY 6: ACCESSIBILITY VIOLATIONS
+accessibility:
+  missing_captions:
+    - severity: BLOCKER
+    - reason: Required for WCAG 2.1 AA compliance
+    - fix: Generate captions, QA for accuracy
+
+  low_contrast:
+    - ratio: "<4.5"
+      severity: BLOCKER
+      reason: Unreadable for low-vision users
+      fix: Ensure minimum 4.5:1 ratio
+
+  no_reduced_motion_support:
+    - severity: WARNING
+    - reason: Should respect prefers-reduced-motion
+    - fix: Add CSS media query, throttle animations
+
+  inaccessible_video_player:
+    - severity: WARNING
+    - reason: No keyboard controls, no play/pause
+    - fix: Use accessible HTML5 video element
+
+  audio_description_missing:
+    - applies_to: Long-form video (>5min) with visual-only content
+      severity: WARNING
+      reason: Important for blind/low-vision users
+      fix: Add audio description track (ADT)
+
+---
+
+# CATEGORY 7: TECHNICAL VIOLATIONS
+technical:
+  missing_asset_files:
+    - severity: BLOCKER
+    - reason: Video won't render if files are missing
+    - fix: Verify all src paths exist, check file extensions
+
+  incorrect_aspect_ratio:
+    - reason: Video dimensions don't match composition
+    - severity: WARNING
+    - fix: Ensure width×height in composition match assets
+
+  audio_sync_drift:
+    - severity: BLOCKER
+    - reason: VO out of sync with lips/visuals
+    - fix: Adjust timeline start times, use FFmpeg sync
+
+  render_errors:
+    - severity: BLOCKER
+    - reason: Composition won't export to video
+    - fix: Run hyperframes lint, debug error messages
+
+  unsupported_codec:
+    - severity: BLOCKER
+    - reason: Hyperframes requires H.264 (MP4), VP9 (WebM)
+    - fix: Re-encode assets to supported formats
+
+---
+
+# CATEGORY 8: NARRATIVE VIOLATIONS
+narrative:
+  weak_opening:
+    - timing: ">1s before hook"
+      severity: WARNING
+      reason: Viewer attention lost before message lands
+      fix: Hook within 1 second (visual or audio)
+
+  confusing_story_arc:
+    - severity: WARNING
+    - reason: Unclear problem → solution progression
+    - fix: Structure: Problem (20%) → Solution (50%) → Results (20%) → CTA (10%)
+
+  soft_cta:
+    - description: CTA is vague ("Click here" vs "Get Started Free")
+      severity: WARNING
+      reason: Lower conversion rate
+      fix: Use action verbs, clear benefit ("Get Started Free", "Watch Demo")
+
+---
+
+# MACHINE VALIDATION RULES
+
+validation:
+  # Linter auto-runs these checks
+  auto_check:
+    - banned_fonts
+    - undersized_text
+    - poor_contrast
+    - rapid_cuts
+    - missing_cta
+    - clipped_audio_threshold
+    - missing_captions
+    - missing_asset_files
+
+  # Human review required for these
+  human_review:
+    - color_palette_creativity
+    - narrative_effectiveness
+    - emotional_impact
+    - brand_alignment
+    - cultural_sensitivity
+
+---
+
+# WAIVER PROCESS
+
+# If project violates anti-pattern:
+# 1. Document violation in project README
+# 2. Explain business justification
+# 3. Get sign-off from Creative Director (human)
+# 4. Mark as "approved exception"
+# 5. Log for future pattern analysis
+
+waivers:
+  authority: Creative Director
+  required_for: Any BLOCKER violation
+  approval_rate: <5% of projects (rare)
+  log_location: studio/video/waivers.log

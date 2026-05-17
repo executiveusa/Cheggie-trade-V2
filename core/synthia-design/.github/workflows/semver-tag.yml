@@ -1,0 +1,32 @@
+# Land the Plane™ v1.0 — Workflow 10
+# Auto-bump semantic version tag on merge to main.
+# Reads commit prefix:
+#   feat: → minor bump
+#   fix:  → patch bump
+#   BREAKING CHANGE → major bump
+name: Semantic Version Tag
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  tag:
+    name: Auto-bump semver
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Bump and tag
+        uses: anothrNick/github-tag-action@1.71.0
+        env:
+          GITHUB_TOKEN:     ${{ secrets.GITHUB_TOKEN }}
+          WITH_V:           true
+          DEFAULT_BUMP:     patch
+          RELEASE_BRANCHES: main
+          DRY_RUN:          false

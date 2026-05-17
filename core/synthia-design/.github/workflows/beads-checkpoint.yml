@@ -1,0 +1,69 @@
+# Land the Plane™ v1.0 — Workflow 09
+# Record bead savepoints on every push to main.
+# Auto-tags if commit message contains bead(N):
+#   git commit -m "bead(7): complete user authentication flow"
+#   → tag: bead-7-complete-user-authentication
+#   → appends to memory/beads_log.md
+name: Bead Checkpoint
+
+on:
+  push:
+    branches: [main]
+  push_tag:
+    tags:
+      - 'bead-*'
+
+jobs:
+  checkpoint:
+    name: Record bead
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract bead info
+        id: bead
+        run: |
+          MSG="${{ github.event.head_commit.message }}"
+          if echo "$MSG" | grep -qE "bead\([0-9]+\)"; then
+            BEAD=$(echo "$MSG" | grep -oE "bead\([0-9]+\)" | head -1 | grep -oE "[0-9]+")
+            DESC=$(echo "$MSG" | sed 's/.*bead([0-9]*)[:[:space:]]*//' | xargs \
+                   | tr ' ' '-' | tr '[:upper:]' '[:lower:]' \
+                   | sed 's/[^a-z0-9-]//g' | cut -c1-30)
+            echo "tag=bead-${BEAD}-${DESC}" >> $GITHUB_OUTPUT
+            echo "is_bead=true" >> $GITHUB_OUTPUT
+          else
+            echo "is_bead=false" >> $GITHUB_OUTPUT
+          fi
+          echo "sha=${GITHUB_SHA:0:7}" >> $GITHUB_OUTPUT
+          echo "ts=$(date -u '+%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_OUTPUT
+
+      - name: Create bead tag
+        if: steps.bead.outputs.is_bead == 'true'
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag "${{ steps.bead.outputs.tag }}"
+          git push origin "${{ steps.bead.outputs.tag }}"
+          echo "✅ Tagged: ${{ steps.bead.outputs.tag }}"
+
+      - name: Update memory/beads_log.md
+        if: steps.bead.outputs.is_bead == 'true'
+        run: |
+          LOG="memory/beads_log.md"
+          mkdir -p memory
+          if [ ! -f "$LOG" ]; then echo "# Beads Log" > "$LOG"; fi
+          echo "" >> "$LOG"
+          echo "## ${{ steps.bead.outputs.tag }}" >> "$LOG"
+          echo "- SHA: ${{ steps.bead.outputs.sha }}" >> "$LOG"
+          echo "- Time: ${{ steps.bead.outputs.ts }}" >> "$LOG"
+          echo "- Message: ${{ github.event.head_commit.message }}" >> "$LOG"
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add "$LOG"
+          git commit -m "chore: update beads_log for ${{ steps.bead.outputs.tag }} [skip ci]"
+          git push

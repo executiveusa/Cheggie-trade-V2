@@ -1,0 +1,139 @@
+# Land the Plane™ v1.0 — Workflow 01
+# CI: typecheck + lint + test + build (parallel, Bun)
+# Runs on every push to any branch and PRs to main.
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NEXT_PUBLIC_APP_URL: http://localhost:3000
+  NEXT_PUBLIC_WEB_URL: http://localhost:3001
+  NEXT_PUBLIC_API_URL: http://localhost:8000
+  NEXT_TELEMETRY_DISABLED: 1
+
+jobs:
+  # ── Path detection ───────────────────────────────────────────────────────────
+  changes:
+    name: Detect changed paths
+    runs-on: ubuntu-latest
+    outputs:
+      web:    ${{ steps.filter.outputs.web }}
+      python: ${{ steps.filter.outputs.python }}
+      any:    ${{ steps.filter.outputs.any }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            web:
+              - 'apps/web/**'
+              - 'apps/dashboard/**'
+              - 'packages/**/*.ts'
+              - 'packages/**/*.tsx'
+            python:
+              - 'agents/**'
+              - 'harness/**'
+              - 'packages/lightning/**'
+              - 'packages/lightrag/**'
+              - 'apps/api/**'
+            any:
+              - '**'
+
+  # ── TypeScript ───────────────────────────────────────────────────────────────
+  typecheck:
+    name: TypeScript
+    runs-on: ubuntu-latest
+    needs: changes
+    if: needs.changes.outputs.web == 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with: { bun-version: 1.3.10 }
+      - run: bun install --frozen-lockfile
+      - run: bun run typecheck
+
+  # ── Biome lint ───────────────────────────────────────────────────────────────
+  lint:
+    name: Biome lint
+    runs-on: ubuntu-latest
+    needs: changes
+    if: needs.changes.outputs.web == 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with: { bun-version: 1.3.10 }
+      - run: bun install --frozen-lockfile
+      - run: bun run check
+
+  # ── Unit tests ───────────────────────────────────────────────────────────────
+  test:
+    name: Vitest
+    runs-on: ubuntu-latest
+    needs: changes
+    if: needs.changes.outputs.web == 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with: { bun-version: 1.3.10 }
+      - run: bun install --frozen-lockfile
+      - run: bun run test
+
+  # ── Python syntax + imports ──────────────────────────────────────────────────
+  python-check:
+    name: Python checks
+    runs-on: ubuntu-latest
+    needs: changes
+    if: needs.changes.outputs.python == 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: Install deps
+        run: pip install -r apps/api/requirements.txt --quiet
+      - name: Syntax check
+        run: |
+          for f in $(find agents harness packages -name "*.py" | grep -v __pycache__); do
+            python -c "import ast; ast.parse(open('$f').read())" || exit 1
+          done
+          echo "✅ All Python files parse cleanly"
+      - name: Import check
+        run: |
+          python -c "
+          import sys; sys.path.insert(0, '.')
+          from agents.synthia.auditor import score_url
+          from agents.lane.scanner import scan
+          from agents.geo.generator import generate
+          from agents.scout.prober import probe_domain
+          from harness.blueprint import BlueprintEngine, get_run
+          from packages.lightrag.client import store_run_learnings
+          from packages.lightning.trainer import LightningTracer
+          from apps.api.main import app
+          print('✅ All imports OK — routes:', len(app.routes))
+          "
+
+  # ── Build web ────────────────────────────────────────────────────────────────
+  build-web:
+    name: Build apps/web
+    runs-on: ubuntu-latest
+    needs: [typecheck, lint, test]
+    if: always() && !failure() && !cancelled()
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with: { bun-version: 1.3.10 }
+      - run: bun install --frozen-lockfile
+      - run: bun run build --filter=web
+      - uses: actions/upload-artifact@v4
+        with:
+          name: web-build-${{ github.sha }}
+          path: apps/web/.next
+          retention-days: 1

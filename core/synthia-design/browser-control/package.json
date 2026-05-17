@@ -1,0 +1,14 @@
+{
+  "name": "browser-control",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "setup:harness": "bash ./scripts/setup-browser-harness.sh",
+    "setup:mcp": "bash ./scripts/setup-chrome-devtools-mcp.sh",
+    "setup:playwright": "bash ./scripts/setup-playwright.sh",
+    "setup:selenium": "bash ./scripts/setup-selenium.sh",
+    "smoke": "node ./smoke/playwright-smoke.js",
+    "smoke:flow": "node ./smoke/playwright-deterministic-flow.js",
+    "smoke:suite": "bash ./scripts/run-smoke-suite.sh"
+  }
+}

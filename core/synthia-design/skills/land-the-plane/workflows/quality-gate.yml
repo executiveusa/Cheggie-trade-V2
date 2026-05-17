@@ -1,0 +1,203 @@
+# Land the Plane™ v1.0 — Workflow 02
+# Quality Gate: blocking PR check — TS + Biome + Vitest + build + GEO + stubs + secrets
+name: Quality Gate
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened]
+
+concurrency:
+  group: quality-gate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ── Path detection ───────────────────────────────────────────────────────────
+  changes:
+    name: Detect paths
+    runs-on: ubuntu-latest
+    outputs:
+      web:    ${{ steps.f.outputs.web }}
+      python: ${{ steps.f.outputs.python }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: f
+        with:
+          filters: |
+            web:
+              - 'apps/web/**'
+              - 'apps/dashboard/**'
+              - 'packages/**'
+            python:
+              - 'agents/**'
+              - 'harness/**'
+              - 'packages/lightning/**'
+              - 'packages/lightrag/**'
+              - 'apps/api/**'
+
+  typecheck:
+    name: TypeScript — zero errors
+    needs: changes
+    if: needs.changes.outputs.web == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with: { bun-version: 1.3.10 }
+      - run: bun install --frozen-lockfile
+      - run: bun run typecheck
+
+  lint:
+    name: Biome — zero violations
+    needs: changes
+    if: needs.changes.outputs.web == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with: { bun-version: 1.3.10 }
+      - run: bun install --frozen-lockfile
+      - run: bun run check
+
+  test:
+    name: Tests — all green
+    needs: changes
+    if: needs.changes.outputs.web == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with: { bun-version: 1.3.10 }
+      - run: bun install --frozen-lockfile
+      - run: bun run test
+
+  build:
+    name: Build — web + dashboard
+    needs: [typecheck, lint, test]
+    if: always() && !failure()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with: { bun-version: 1.3.10 }
+      - run: bun install --frozen-lockfile
+      - run: bun run build --filter=web
+        env:
+          NEXT_PUBLIC_APP_URL: http://localhost:3000
+          NEXT_PUBLIC_WEB_URL: http://localhost:3001
+          NEXT_TELEMETRY_DISABLED: 1
+      - run: bun run build --filter=dashboard
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:8000
+          NEXT_TELEMETRY_DISABLED: 1
+
+  geo-gate:
+    name: GEO compliance
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: llms.txt present + non-empty
+        run: |
+          test -f apps/web/public/llms.txt || { echo "❌ llms.txt missing"; exit 1; }
+          [ $(wc -c < apps/web/public/llms.txt) -gt 100 ] || { echo "❌ llms.txt too small (<100 bytes)"; exit 1; }
+          echo "✅ llms.txt: $(wc -c < apps/web/public/llms.txt) bytes"
+      - name: AI bots allowed in robots.ts
+        run: |
+          ROBOTS="apps/web/app/[locale]/robots.ts"
+          grep -q "GPTBot"        "$ROBOTS" || { echo "❌ GPTBot missing from robots.ts";        exit 1; }
+          grep -q "ClaudeBot"     "$ROBOTS" || { echo "❌ ClaudeBot missing from robots.ts";     exit 1; }
+          grep -q "PerplexityBot" "$ROBOTS" || { echo "❌ PerplexityBot missing from robots.ts"; exit 1; }
+          echo "✅ All AI bots allowed"
+      - name: JSON-LD in layout
+        run: |
+          grep -q "application/ld+json" "apps/web/app/[locale]/layout.tsx" \
+            || { echo "❌ JSON-LD missing from layout.tsx"; exit 1; }
+          echo "✅ JSON-LD present"
+
+  secret-scan:
+    name: Secret scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: No secrets in source
+        run: |
+          if grep -rE "(sk-ant-[a-zA-Z0-9]{20,}|sk_live_[a-zA-Z0-9]{20,}|AIza[0-9A-Za-z-_]{35})" \
+            apps/ packages/ agents/ harness/ \
+            --include="*.ts" --include="*.tsx" --include="*.py" \
+            | grep -v ".env" | grep -v node_modules; then
+            echo "🔴 Secret detected in source — rotate immediately"
+            exit 1
+          fi
+          echo "✅ No secrets in source"
+
+  stub-scan:
+    name: Stub scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: No stubs in production code
+        run: |
+          STUBS=$(grep -rn \
+            "TODO\|Not implemented\|# TODO\|return None$\|_ = run_data\|_ = filters" \
+            agents/ harness/ packages/ \
+            --include="*.py" 2>/dev/null \
+            | grep -v "__pycache__" || true)
+          if [ -n "$STUBS" ]; then
+            echo "🔴 Stubs detected in production code:"
+            echo "$STUBS"
+            exit 1
+          fi
+          echo "✅ No stubs"
+
+  dependency-review:
+    name: New NPM dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hiwelo/new-dependencies-action@1.0.3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+  # ── PR summary comment ───────────────────────────────────────────────────────
+  pr-summary:
+    name: PR summary comment
+    needs: [typecheck, lint, test, build, geo-gate, secret-scan, stub-scan]
+    if: always()
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const jobs = {
+              'TypeScript':     '${{ needs.typecheck.result }}',
+              'Biome lint':     '${{ needs.lint.result }}',
+              'Tests':          '${{ needs.test.result }}',
+              'Build':          '${{ needs.build.result }}',
+              'GEO gate':       '${{ needs.geo-gate.result }}',
+              'Secret scan':    '${{ needs.secret-scan.result }}',
+              'Stub scan':      '${{ needs.stub-scan.result }}',
+            };
+            const icon = r => r === 'success' ? '✅' : r === 'skipped' ? '⏭️' : '❌';
+            const allGreen = Object.values(jobs).every(r => ['success','skipped'].includes(r));
+            const rows = Object.entries(jobs).map(([k,v]) => `${icon(v)} **${k}**: ${v}`).join('\n');
+            const body = [
+              '## Quality Gate — Emerald Tablets™',
+              '',
+              allGreen
+                ? '🟢 **All gates green — auto-merge eligible**'
+                : '🔴 **Gates failed — fix before merging**',
+              '',
+              rows,
+              '',
+              '_SYNTHIA™ floor 8.5/10 · Land the Plane™ v1.0_',
+            ].join('\n');
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo:  context.repo.repo,
+              issue_number: context.issue.number,
+              body,
+            });
