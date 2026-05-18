@@ -1,79 +1,72 @@
-from __future__ import annotations
+"""Browser Agent service entry point."""
 
-from datetime import datetime, timezone
-from typing import Any, Dict
-from uuid import uuid4
+import os
+import logging
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+from dotenv import load_dotenv
 
-from fastapi import FastAPI
-from pydantic import BaseModel, Field
+from browser_agent import BrowserAgentManager
+
+load_dotenv()
+logging.basicConfig(level=logging.INFO)
+
+app = FastAPI(title="CheggieTrade Browser Agent", docs_url=None, redoc_url=None)
+app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
+
+manager = BrowserAgentManager()
 
 
-app = FastAPI(title="CheggieTrade Browser Agent")
-SESSIONS: Dict[str, Dict[str, Any]] = {}
-VALID_ACTIONS = {"open", "click", "type", "scroll", "wait", "screenshot", "close"}
-
-
-class ActionPayload(BaseModel):
-    session_id: str
-    action: str = Field(min_length=1)
-    target: str | None = None
-    value: str | None = None
+class ActionRequest(BaseModel):
+    action: str
+    params: dict = {}
     approved: bool = False
 
 
-def now_iso() -> str:
-    return datetime.now(timezone.utc).isoformat()
-
-
 @app.post("/api/browser/session")
-def create_session() -> Dict[str, Any]:
-    session_id = str(uuid4())
-    SESSIONS[session_id] = {
-        "state": "active",
-        "created_at": now_iso(),
-        "updated_at": now_iso(),
-        "steps": [],
-        "screenshots": [],
-    }
-    return {"status": "ok", "session_id": session_id, "state": "active", "created_at": SESSIONS[session_id]["created_at"]}
+async def create_session(headless: bool = True):
+    session = await manager.create_session(headless=headless)
+    return {"ok": True, "session_id": session.session_id, "created_at": session.created_at}
 
 
-@app.post("/api/browser/action")
-def browser_action(payload: ActionPayload) -> Dict[str, Any]:
-    session = SESSIONS.get(payload.session_id)
+@app.get("/api/browser/session")
+async def list_sessions():
+    return {"ok": True, "sessions": manager.list_sessions()}
+
+
+@app.delete("/api/browser/session/{session_id}")
+async def close_session(session_id: str):
+    await manager.close_session(session_id)
+    return {"ok": True}
+
+
+@app.post("/api/browser/action/{session_id}")
+async def execute_action(session_id: str, req: ActionRequest):
+    session = manager.get_session(session_id)
     if not session:
-        return {"status": "error", "message": "session_not_found"}
+        raise HTTPException(status_code=404, detail="Session not found")
+    result = await session.execute_action(req.action, req.params, req.approved)
+    return {"ok": True, **result}
 
-    if session["state"] != "active":
-        return {"status": "error", "message": "object_state_invalid", "state": session["state"]}
 
-    action = payload.action.strip().lower()
-    if action not in VALID_ACTIONS:
-        return {"status": "error", "message": "unsupported_action", "action": payload.action}
+@app.post("/api/browser/approve/{session_id}")
+async def approve_action(session_id: str):
+    session = manager.get_session(session_id)
+    if not session:
+        raise HTTPException(status_code=404, detail="Session not found")
+    result = await session.approve_pending()
+    return {"ok": True, **result}
 
-    if not payload.approved:
-        return {"status": "pending_approval", "action": action, "session_id": payload.session_id}
 
-    step = {
-        "timestamp": now_iso(),
-        "action": action,
-        "target": payload.target,
-        "value": payload.value,
-    }
-    session["steps"].append(step)
+@app.get("/api/browser/steps/{session_id}")
+async def get_steps(session_id: str):
+    session = manager.get_session(session_id)
+    if not session:
+        raise HTTPException(status_code=404, detail="Session not found")
+    return {"ok": True, "steps": session.get_steps()}
 
-    screenshot = f"/tmp/{payload.session_id}-{len(session['steps'])}.png"
-    session["screenshots"].append(screenshot)
 
-    if action == "close":
-        session["state"] = "closed"
-
-    session["updated_at"] = now_iso()
-
-    return {
-        "status": "ok",
-        "session_id": payload.session_id,
-        "state": session["state"],
-        "step": step,
-        "screenshot": screenshot,
-    }
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=int(os.getenv("BROWSER_PORT", 8002)))

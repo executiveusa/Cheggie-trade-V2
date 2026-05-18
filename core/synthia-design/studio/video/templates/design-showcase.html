@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Design Showcase Template</title>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    #stage {
+      position: relative;
+      overflow: hidden;
+      background: #0a1108;
+      font-family: 'Suisse BP', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      width: 1080px;
+      height: 1920px;
+    }
+
+    /* Hero design component */
+    .hero-design {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      opacity: 0;
+    }
+
+    /* Component showcase */
+    .component-frame {
+      position: absolute;
+      background: rgba(90, 122, 82, 0.2);
+      border: 2px solid #5a7a52;
+      border-radius: 20px;
+      padding: 40px;
+      opacity: 0;
+      backdrop-filter: blur(10px);
+    }
+
+    .component-name {
+      position: absolute;
+      font-size: 32px;
+      font-weight: 600;
+      color: #c4963c;
+      opacity: 0;
+    }
+
+    /* Typography showcase */
+    .typography-section {
+      position: absolute;
+      inset: 0;
+      padding: 200px 100px;
+      opacity: 0;
+    }
+
+    .type-heading {
+      font-size: 72px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 40px;
+      letter-spacing: -0.02em;
+    }
+
+    .type-body {
+      font-size: 32px;
+      font-weight: 400;
+      color: #c4963c;
+      line-height: 1.6;
+      max-width: 800px;
+    }
+
+    /* Color palette showcase */
+    .palette-section {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 40px;
+      padding: 200px 100px;
+      opacity: 0;
+    }
+
+    .color-box {
+      aspect-ratio: 1;
+      border-radius: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      opacity: 0;
+      font-size: 24px;
+      font-weight: 600;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    }
+
+    .color-primary { background: #c4963c; }
+    .color-secondary { background: #5a7a52; }
+    .color-dark { background: #0a1108; }
+    .color-accent { background: #2d4a24; }
+
+    /* Component interaction states */
+    .state-buttons {
+      position: absolute;
+      top: 400px;
+      left: 100px;
+      display: flex;
+      gap: 30px;
+      opacity: 0;
+    }
+
+    .state-btn {
+      padding: 16px 40px;
+      border: 2px solid #c4963c;
+      border-radius: 8px;
+      background: transparent;
+      color: #c4963c;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .state-btn.active {
+      background: #c4963c;
+      color: #0a1108;
+    }
+
+    .state-btn:hover {
+      transform: scale(1.05);
+    }
+
+    /* Final brand frame */
+    .final-frame {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #0a1108 0%, #1a2a18 100%);
+      opacity: 0;
+    }
+
+    .final-logo {
+      font-size: 120px;
+      font-weight: 700;
+      color: #c4963c;
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .final-tagline {
+      font-size: 48px;
+      color: #ffffff;
+      text-align: center;
+    }
+
+    /* Audio */
+    audio {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="stage"
+    data-composition-id="design-showcase-v1"
+    data-width="1080"
+    data-height="1920"
+    data-frame-rate="30"
+    data-duration="20">
+
+    <!-- AUDIO TRACKS -->
+    <audio
+      src="assets/audio/ambient-design-music.mp3"
+      data-start="0"
+      data-duration="20"
+      data-track-index="-2"
+      data-volume="0.3"
+    ></audio>
+
+    <audio
+      src="assets/audio/sfx-swoosh.mp3"
+      data-start="2"
+      data-duration="0.6"
+      data-volume="0.6"
+    ></audio>
+
+    <audio
+      src="assets/audio/sfx-reveal.mp3"
+      data-start="5"
+      data-duration="0.4"
+      data-volume="0.5"
+    ></audio>
+
+    <!-- DESIGN SHOWCASE SECTIONS -->
+
+    <!-- Hero Design Component [0-3s] -->
+    <div class="hero-design" data-start="0" data-duration="3">
+      <img src="assets/design/hero-component.png"
+        alt="Hero component"
+        style="max-width: 600px; border-radius: 20px; box-shadow: 0 40px 100px rgba(0, 0, 0, 0.6);">
+    </div>
+
+    <div class="component-name" style="top: 100px; left: 50%; transform: translateX(-50%); width: 100%; text-align: center;" data-start="1" data-duration="2">
+      Hero Component
+    </div>
+
+    <!-- Component Variations [3-8s] -->
+    <div class="component-frame" style="left: 60px; top: 300px; width: 480px; height: 400px;" data-start="3" data-duration="2.5">
+      <img src="assets/design/component-default.png"
+        alt="Default state"
+        style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;">
+    </div>
+
+    <div class="component-name" style="top: 320px; left: 60px;" data-start="3" data-duration="2.5">
+      Default State
+    </div>
+
+    <div class="component-frame" style="right: 60px; top: 300px; width: 480px; height: 400px;" data-start="3.5" data-duration="2.5">
+      <img src="assets/design/component-hover.png"
+        alt="Hover state"
+        style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;">
+    </div>
+
+    <div class="component-name" style="top: 320px; right: 60px;" data-start="3.5" data-duration="2.5">
+      Hover State
+    </div>
+
+    <!-- Typography Showcase [8-12s] -->
+    <div class="typography-section" data-start="8" data-duration="4">
+      <div class="type-heading">Design Typography</div>
+      <div class="type-body">
+        Suisse BP for headings. Clean. Sophisticated. Premium.
+      </div>
+    </div>
+
+    <!-- Color Palette [12-17s] -->
+    <div class="palette-section" data-start="12" data-duration="5">
+      <div class="color-box color-primary" data-start="12" data-duration="5">
+        Primary<br>#c4963c
+      </div>
+      <div class="color-box color-secondary" data-start="12.3" data-duration="4.7">
+        Secondary<br>#5a7a52
+      </div>
+      <div class="color-box color-dark" data-start="12.6" data-duration="4.4">
+        Dark<br>#0a1108
+      </div>
+      <div class="color-box color-accent" data-start="12.9" data-duration="4.1">
+        Accent<br>#2d4a24
+      </div>
+    </div>
+
+    <!-- Final Brand Frame [17-20s] -->
+    <div class="final-frame" data-start="17" data-duration="3">
+      <div style="text-align: center;">
+        <div class="final-logo">SYNTHIA</div>
+        <div class="final-tagline">Premium Design Studio</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const timeline = gsap.timeline();
+
+    // [0-3s] Hero component fades in with scale
+    timeline.from('.hero-design', {
+      opacity: 0,
+      scale: 0.9,
+      duration: 0.6,
+      ease: 'power3.out',
+    }, '0');
+
+    timeline.from('.component-name', {
+      opacity: 0,
+      y: -20,
+      duration: 0.4,
+    }, '1');
+
+    // [3-8s] Component variations fade in alternately
+    timeline.from('.component-frame', {
+      opacity: 0,
+      y: 30,
+      stagger: 0.3,
+      duration: 0.5,
+      ease: 'power2.out',
+    }, '3');
+
+    timeline.from('.component-name', {
+      opacity: 0,
+      duration: 0.3,
+    }, '3.2');
+
+    // [8-12s] Typography section
+    timeline.from('.typography-section', {
+      opacity: 0,
+      duration: 0.5,
+    }, '8');
+
+    timeline.from('.type-heading', {
+      opacity: 0,
+      y: 30,
+      duration: 0.6,
+      ease: 'power3.out',
+    }, '8.2');
+
+    timeline.from('.type-body', {
+      opacity: 0,
+      y: 20,
+      duration: 0.5,
+      ease: 'power2.out',
+    }, '8.5');
+
+    // [12-17s] Color palette reveal
+    timeline.from('.palette-section', {
+      opacity: 0,
+      duration: 0.5,
+    }, '12');
+
+    timeline.from('.color-box', {
+      opacity: 0,
+      scale: 0.8,
+      stagger: 0.2,
+      duration: 0.5,
+      ease: 'back.out(1.2)',
+    }, '12.2');
+
+    // [17-20s] Final frame with glow
+    timeline.from('.final-frame', {
+      opacity: 0,
+      duration: 0.5,
+    }, '17');
+
+    timeline.from('.final-logo', {
+      opacity: 0,
+      scale: 0.8,
+      duration: 0.6,
+      ease: 'back.out(1.5)',
+    }, '17.2');
+
+    timeline.to('.final-logo', {
+      textShadow: '0 0 40px rgba(196, 150, 60, 0.8), 0 0 20px rgba(196, 150, 60, 0.4)',
+      duration: 0.5,
+    }, '17.5');
+
+    timeline.from('.final-tagline', {
+      opacity: 0,
+      y: 20,
+      duration: 0.4,
+    }, '17.8');
+
+    // Respect reduced motion
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      gsap.globalTimeline.timeScale(0.2);
+    }
+  </script>
+</body>
+</html>

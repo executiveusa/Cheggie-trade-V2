@@ -1,0 +1,103 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-4);
+  width: 100%;
+  max-width: 360px;
+}
+
+.svg {
+  width: 100%;
+  max-width: 280px;
+  height: auto;
+  overflow: visible;
+}
+
+/* ── Line animation ──────────────────────────────────────────── */
+@keyframes dashFlow {
+  from { stroke-dashoffset: 16; }
+  to   { stroke-dashoffset: 0; }
+}
+
+.line {
+  animation: dashFlow 1.2s linear infinite;
+}
+
+/* ── Node entrance ───────────────────────────────────────────── */
+@keyframes nodeIn {
+  from { opacity: 0; transform: scale(0.6); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.agentNode {
+  animation: nodeIn 0.5s var(--ease) both;
+  transform-origin: center;
+}
+
+/* ── Pulse rings ─────────────────────────────────────────────── */
+@keyframes ringPulse {
+  0%   { r: 22; opacity: 0.4; }
+  100% { r: 30; opacity: 0; }
+}
+
+.pulse {
+  animation: ringPulse 2s ease-out infinite;
+}
+
+@keyframes centerPulse {
+  0%   { r: 32; opacity: 0.5; }
+  100% { r: 44; opacity: 0; }
+}
+
+.centerPulse {
+  animation: centerPulse 2.5s ease-out infinite;
+}
+
+/* ── Indicators ──────────────────────────────────────────────── */
+.indicators {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  width: 100%;
+  max-width: 240px;
+}
+
+@keyframes indicatorIn {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.indicator {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  animation: indicatorIn 0.5s var(--ease) both;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.4; transform: scale(0.7); }
+}
+
+.indicatorLabel {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-2);
+  letter-spacing: 0.06em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .line, .pulse, .centerPulse, .agentNode, .indicator, .dot {
+    animation: none;
+  }
+}

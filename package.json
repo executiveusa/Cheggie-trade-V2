@@ -1,0 +1,16 @@
+{
+  "name": "cheggie-trade-v2",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=apps/web",
+    "dev:all": "concurrently \"npm run dev --workspace=apps/web\" \"cd services/api && python main.py\" \"cd services/hermes && python main.py\"",
+    "build": "npm run build --workspace=apps/web",
+    "test": "npm run test --workspace=apps/web"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
