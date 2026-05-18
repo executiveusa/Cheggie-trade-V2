@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "lint": "node -e \"console.log('lint placeholder: no eslint config')\"",
+    "typecheck": "tsc --noEmit",
     "build": "next build",
     "start": "next start",
     "test": "jest"

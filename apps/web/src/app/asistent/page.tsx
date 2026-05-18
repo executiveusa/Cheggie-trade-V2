@@ -71,7 +71,7 @@ export default function AsistentPage() {
               <h1 className={styles.welcomeTitle}>{s.title}</h1>
               <p className={styles.welcomeSub}>{s.sub}</p>
               <div className={styles.suggestions}>
-                {s.suggestions.map((q) => (
+                {s.suggestions.map((q: string) => (
                   <button key={q} className={styles.suggestion} onClick={() => send(q)}>
                     {q}
                   </button>

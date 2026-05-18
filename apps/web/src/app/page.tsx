@@ -65,7 +65,7 @@ export default function Home() {
         <div className="container">
           <span className="eyebrow">{h.howTitle}</span>
           <div className={styles.steps}>
-            {h.steps.map((step, i) => (
+            {h.steps.map((step: { n: string; title: string; body: string }, i: number) => (
               <div key={step.n} className={styles.step}>
                 <div className={styles.stepLeft}>
                   <span className={styles.stepN}>{step.n}</span>
@@ -90,7 +90,7 @@ export default function Home() {
         <div className="container">
           <span className="eyebrow">{h.useCasesTitle}</span>
           <div className={styles.useCasesList}>
-            {h.useCases.map((uc) => (
+            {h.useCases.map((uc: { icon: string; title: string; body: string }) => (
               <div key={uc.title} className={styles.useCase}>
                 <span className={styles.useCaseIcon} aria-hidden="true">{uc.icon}</span>
                 <div>
@@ -114,7 +114,7 @@ export default function Home() {
               <p className={styles.trustBody}>{h.trustBody}</p>
             </div>
             <div className={styles.trustBadges}>
-              {h.trustBadges.map((b) => (
+              {h.trustBadges.map((b: string) => (
                 <span key={b} className={styles.trustBadge}>{b}</span>
               ))}
             </div>
