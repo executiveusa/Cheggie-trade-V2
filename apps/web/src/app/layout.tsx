@@ -1,25 +1,22 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { AppProvider } from "@/lib/context";
 import Nav from "@/components/Nav";
 
 export const metadata: Metadata = {
-  title: "CheggieTrade — Tržišna analiza",
+  title: "CheggieTrade — AI trading desk",
   description: "CheggieTrade pretvara tržišnu buku u jasan trading plan.",
   icons: { icon: "/favicon.ico" },
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="sr">
+    <html lang="sr" suppressHydrationWarning>
       <body>
-        <Nav />
-        <main style={{ paddingTop: "60px" }}>
-          {children}
-        </main>
+        <AppProvider>
+          <Nav />
+          <main style={{ paddingTop: "64px" }}>{children}</main>
+        </AppProvider>
       </body>
     </html>
   );

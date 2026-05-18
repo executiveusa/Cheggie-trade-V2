@@ -1,136 +1,126 @@
-.page {
-  padding: var(--sp-7) 0;
-}
+.page { padding: var(--sp-16) 0 var(--sp-20); }
 
 .header {
   display: flex;
   flex-direction: column;
-  gap: var(--sp-3);
-  margin-bottom: var(--sp-7);
-  max-width: 700px;
-}
-
-.eyebrow {
-  font-size: 0.75rem;
-  font-weight: 400;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--accent);
-  max-width: none;
+  gap: var(--sp-4);
+  margin-bottom: var(--sp-12);
+  max-width: 640px;
 }
 
 .title {
-  font-family: var(--font-display);
   font-size: clamp(3rem, 5.5vw, 5rem);
-  font-weight: 300;
-  line-height: 1.05;
+  font-weight: 600;
   letter-spacing: -0.03em;
-}
-
-.title em {
-  font-style: italic;
-  color: var(--accent);
+  line-height: 1.05;
+  color: var(--text-1);
 }
 
 .subtitle {
-  font-size: 1.05rem;
-  color: var(--text-secondary);
-  max-width: 44ch;
+  font-size: 1.125rem;
+  color: var(--text-2);
+  font-weight: 300;
+  max-width: 40ch;
 }
 
-/* ── Steps ───────────────────────────────────────────────────── */
-.stepsLayout {
+/* ── Steps ─────────────────────────────────────────────────────── */
+.stepsWrap {
   display: flex;
   flex-direction: column;
-  gap: 0;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  margin-bottom: var(--sp-7);
+  margin-bottom: var(--sp-16);
 }
 
 .step {
   display: grid;
-  grid-template-columns: 80px 1fr;
-  gap: var(--sp-4);
-  padding: var(--sp-5) var(--sp-5);
-  border-bottom: 1px solid var(--border);
-  transition: background 0.15s var(--ease);
+  grid-template-columns: 72px 1fr;
+  gap: var(--sp-8);
 }
 
-.step:last-child { border-bottom: none; }
-.step:hover { background: var(--surface); }
-
-.stepNumber {
-  font-family: var(--font-display);
-  font-size: 2rem;
-  font-weight: 300;
-  color: var(--accent);
-  opacity: 0.6;
-  line-height: 1;
-  padding-top: 4px;
-}
-
-.stepContent {
+.stepLeft {
   display: flex;
   flex-direction: column;
-  gap: var(--sp-2);
+  align-items: center;
+  padding-top: 3px;
 }
 
+.n {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.connector {
+  width: 1px;
+  flex: 1;
+  min-height: var(--sp-10);
+  background: linear-gradient(to bottom, var(--border-alt), transparent);
+  margin: var(--sp-2) 0;
+}
+
+.content {
+  padding-bottom: var(--sp-10);
+  border-bottom: 1px solid var(--border);
+}
+
+.step:last-child .content { border-bottom: none; padding-bottom: 0; }
+
 .stepTitle {
-  font-family: var(--font-display);
-  font-size: clamp(1.4rem, 2.5vw, 2rem);
-  font-weight: 300;
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  font-weight: 500;
+  letter-spacing: -0.02em;
   line-height: 1.1;
-  color: var(--text-primary);
+  color: var(--text-1);
+  margin-bottom: var(--sp-3);
 }
 
 .stepBody {
   font-size: 1rem;
-  color: var(--text-secondary);
-  line-height: 1.65;
-  max-width: 52ch;
+  color: var(--text-2);
+  line-height: 1.75;
+  font-weight: 300;
+  max-width: 48ch;
 }
 
-/* ── CTA ─────────────────────────────────────────────────────── */
-.cta {
+/* ── CTAs ──────────────────────────────────────────────────────── */
+.ctas {
   display: flex;
   align-items: center;
-  gap: var(--sp-3);
+  gap: var(--sp-4);
   flex-wrap: wrap;
 }
 
-.ctaBtn {
+.ctaPrimary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   min-height: 52px;
-  padding: 0 var(--sp-5);
+  padding: 0 var(--sp-6);
   background: var(--accent);
-  color: var(--canvas);
-  font-size: 0.875rem;
+  color: #080a09;
+  font-size: 0.9375rem;
   font-weight: 500;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  border-radius: var(--radius);
-  transition: background 0.2s var(--ease);
+  border-radius: var(--radius-sm);
+  transition: background 0.15s var(--ease);
 }
 
-.ctaBtn:hover { background: var(--accent-dim); }
+.ctaPrimary:hover { background: var(--accent-dim); }
 
-.ctaSecondary {
+.ctaGhost {
   display: inline-flex;
   align-items: center;
   min-height: 52px;
-  color: var(--text-secondary);
+  color: var(--text-2);
   font-size: 0.9375rem;
   font-weight: 300;
-  transition: color 0.2s var(--ease);
+  transition: color 0.15s var(--ease);
 }
 
-.ctaSecondary:hover { color: var(--text-primary); }
+.ctaGhost:hover { color: var(--text-1); }
 
 @media (max-width: 600px) {
-  .step { grid-template-columns: 1fr; gap: var(--sp-2); }
-  .stepNumber { font-size: 1rem; }
+  .step { grid-template-columns: 48px 1fr; gap: var(--sp-4); }
 }

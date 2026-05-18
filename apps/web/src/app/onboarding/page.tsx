@@ -1,27 +1,13 @@
 import Link from "next/link";
 import styles from "./page.module.css";
 
+// Static — no locale needed; content is universal here
 const STEPS = [
-  {
-    number: "01",
-    title: "Unesite ticker",
-    body: "Svaka analiza počinje od jednog simbola. Dionice, ETF-ovi, kripto — sve na jednom mestu.",
-  },
-  {
-    number: "02",
-    title: "Pokrenite analizu",
-    body: "Sistem simultano analizira fundamentale, vesti i tržišni sentiment. Traje oko 30 sekundi.",
-  },
-  {
-    number: "03",
-    title: "Pročitajte signal",
-    body: "Dobijate jasan zaključak — kupuj, drži, ili prodaj — sa kontekstom koji ga podupire.",
-  },
-  {
-    number: "04",
-    title: "Pratite pozicije",
-    body: "Dodajte ticker na watchlist. Sistem prati kretanje i upozorava na promenu teze.",
-  },
+  { n: "01", title: "Unesi ticker",          body: "Ukucaj simbol dionice ili kripta — AAPL, NVDA, BTC-USD." },
+  { n: "02", title: "Izaberi strategiju",     body: "Konzervativna, umjerena ili agresivna — sistem prilagođava analizu." },
+  { n: "03", title: "AI agenti analiziraju",  body: "Fundamentali, vesti, sentiment i tehnički indikatori — sve istovremeno." },
+  { n: "04", title: "Risk layer proverava",   body: "Nezavisni sloj filtrira odluke i upozorava na visok rizik." },
+  { n: "05", title: "Dobijaš jasan signal",   body: "Kupuj, drži, ili prodaj — sa konkretnim razlogom." },
 ];
 
 export default function OnboardingPage() {
@@ -29,21 +15,23 @@ export default function OnboardingPage() {
     <div className={styles.page}>
       <div className="container">
         <div className={styles.header}>
-          <p className={styles.eyebrow}>Kako funkcioniše</p>
+          <span className="eyebrow">Kako funkcioniše</span>
           <h1 className={styles.title}>
-            Od buke do<br />
-            <em>jasnog plana.</em>
+            Od buke do<br />jasnog plana.
           </h1>
           <p className={styles.subtitle}>
-            CheggieTrade analizira tržište umesto vas. Ovako izgleda proces.
+            CheggieTrade analizira tržište umesto vas.
           </p>
         </div>
 
-        <div className={styles.stepsLayout}>
-          {STEPS.map((step) => (
-            <div key={step.number} className={styles.step}>
-              <span className={styles.stepNumber}>{step.number}</span>
-              <div className={styles.stepContent}>
+        <div className={styles.stepsWrap}>
+          {STEPS.map((step, i) => (
+            <div key={step.n} className={styles.step}>
+              <div className={styles.stepLeft}>
+                <span className={styles.n}>{step.n}</span>
+                {i < STEPS.length - 1 && <div className={styles.connector} />}
+              </div>
+              <div className={styles.content}>
                 <h2 className={styles.stepTitle}>{step.title}</h2>
                 <p className={styles.stepBody}>{step.body}</p>
               </div>
@@ -51,13 +39,9 @@ export default function OnboardingPage() {
           ))}
         </div>
 
-        <div className={styles.cta}>
-          <Link href="/analiza" className={styles.ctaBtn}>
-            Pokreni analizu
-          </Link>
-          <Link href="/asistent" className={styles.ctaSecondary}>
-            Postavite pitanje asistentu
-          </Link>
+        <div className={styles.ctas}>
+          <Link href="/analiza" className={styles.ctaPrimary}>Pokreni prvu analizu</Link>
+          <Link href="/asistent" className={styles.ctaGhost}>Razgovarajte s asistentom</Link>
         </div>
       </div>
     </div>
