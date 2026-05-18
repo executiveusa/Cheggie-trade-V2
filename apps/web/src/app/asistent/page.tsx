@@ -1,27 +1,19 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { useApp } from "@/lib/context";
 import styles from "./page.module.css";
 
-interface Message {
-  role: "user" | "assistant";
-  content: string;
-}
-
-const SUGGESTED = [
-  "Koji sektor je najjači ovog meseca?",
-  "Kako da čitam earnings izveštaj?",
-  "Šta je stop-loss i kada ga koristim?",
-  "Da li je dobro vreme za ulaz u tehnološke akcije?",
-];
+interface Message { role: "user" | "assistant"; content: string; }
 
 export default function AsistentPage() {
+  const { t } = useApp();
+  const s = t.asistent;
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const [isListening, setIsListening] = useState(false);
+  const [listening, setListening] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -29,8 +21,8 @@ export default function AsistentPage() {
 
   async function send(text: string) {
     if (!text.trim() || loading) return;
-    const userMsg: Message = { role: "user", content: text.trim() };
-    const next = [...messages, userMsg];
+    const msg: Message = { role: "user", content: text.trim() };
+    const next = [...messages, msg];
     setMessages(next);
     setInput("");
     setLoading(true);
@@ -45,35 +37,25 @@ export default function AsistentPage() {
       const data = await res.json();
       setMessages([...next, { role: "assistant", content: data.response }]);
     } catch {
-      setMessages([...next, {
-        role: "assistant",
-        content: "Asistent trenutno nije dostupan. Pokušajte ponovo za trenutak.",
-      }]);
+      setMessages([...next, { role: "assistant", content: "Privremeno nedostupan. Pokušajte ponovo." }]);
     } finally {
       setLoading(false);
     }
   }
 
-  function handleKeyDown(e: React.KeyboardEvent) {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      send(input);
-    }
+  function handleKey(e: React.KeyboardEvent) {
+    if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(input); }
   }
 
   function startVoice() {
-    if (typeof window === "undefined") return;
     const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SR) return;
     const rec = new SR();
     rec.lang = "sr-RS";
     rec.interimResults = false;
-    rec.onstart = () => setIsListening(true);
-    rec.onend = () => setIsListening(false);
-    rec.onresult = (e: any) => {
-      const transcript = e.results[0][0].transcript;
-      send(transcript);
-    };
+    rec.onstart = () => setListening(true);
+    rec.onend   = () => setListening(false);
+    rec.onresult = (e: any) => send(e.results[0][0].transcript);
     rec.start();
   }
 
@@ -82,19 +64,14 @@ export default function AsistentPage() {
   return (
     <div className={styles.page}>
       <div className={styles.layout}>
-        {/* ── Left: intro or chat ── */}
         <div className={styles.chatArea}>
           {isEmpty ? (
-            <div className={styles.welcome}>
-              <p className={styles.eyebrow}>Asistent</p>
-              <h1 className={styles.welcomeTitle}>
-                Postavite pitanje<br />o tržištu.
-              </h1>
-              <p className={styles.welcomeSub}>
-                Jasni odgovori. Bez žargona. Bez nagađanja.
-              </p>
+            <div className={`${styles.welcome} fade-up`}>
+              <span className="eyebrow">{s.eyebrow}</span>
+              <h1 className={styles.welcomeTitle}>{s.title}</h1>
+              <p className={styles.welcomeSub}>{s.sub}</p>
               <div className={styles.suggestions}>
-                {SUGGESTED.map((q) => (
+                {s.suggestions.map((q) => (
                   <button key={q} className={styles.suggestion} onClick={() => send(q)}>
                     {q}
                   </button>
@@ -105,14 +82,12 @@ export default function AsistentPage() {
             <div className={styles.messages}>
               {messages.map((m, i) => (
                 <div key={i} className={`${styles.message} ${styles[m.role]}`}>
-                  <p className={styles.messageContent}>{m.content}</p>
+                  <p className={styles.msgContent}>{m.content}</p>
                 </div>
               ))}
               {loading && (
                 <div className={`${styles.message} ${styles.assistant}`}>
-                  <div className={styles.typingIndicator}>
-                    <span /><span /><span />
-                  </div>
+                  <div className={styles.typing}><span/><span/><span/></div>
                 </div>
               )}
               <div ref={bottomRef} />
@@ -120,26 +95,24 @@ export default function AsistentPage() {
           )}
         </div>
 
-        {/* ── Input bar ── */}
+        {/* ── Input ── */}
         <div className={styles.inputBar}>
           <div className={styles.inputWrap}>
             <textarea
-              ref={inputRef}
-              className={styles.input}
+              className={styles.textarea}
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              onKeyDown={handleKeyDown}
+              onKeyDown={handleKey}
               placeholder="Unesite pitanje…"
               rows={1}
-              aria-label="Poruka asistentu"
+              aria-label="Poruka"
             />
             <div className={styles.inputActions}>
               <button
-                className={`${styles.voiceBtn} ${isListening ? styles.listening : ""}`}
+                className={`${styles.iconBtn} ${listening ? styles.active : ""}`}
                 onClick={startVoice}
-                type="button"
                 aria-label="Glasovni unos"
-                title="Glasovni unos"
+                type="button"
               >
                 <MicIcon />
               </button>
@@ -154,7 +127,7 @@ export default function AsistentPage() {
               </button>
             </div>
           </div>
-          <p className={styles.inputHint}>Enter za slanje · Shift+Enter za novi red</p>
+          <p className={styles.hint}>{s.hint}</p>
         </div>
       </div>
     </div>
@@ -163,7 +136,7 @@ export default function AsistentPage() {
 
 function MicIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
       <path d="M12 2a3 3 0 0 1 3 3v7a3 3 0 0 1-6 0V5a3 3 0 0 1 3-3z"/>
       <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
       <line x1="12" y1="19" x2="12" y2="22"/>
@@ -173,7 +146,7 @@ function MicIcon() {
 
 function SendIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
       <line x1="22" y1="2" x2="11" y2="13"/>
       <polygon points="22 2 15 22 11 13 2 9 22 2"/>
     </svg>

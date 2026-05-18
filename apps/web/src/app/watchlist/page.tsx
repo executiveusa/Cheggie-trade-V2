@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useApp } from "@/lib/context";
 import styles from "./page.module.css";
 
 interface WatchItem {
@@ -8,27 +9,30 @@ interface WatchItem {
   price?: number;
   change_pct?: number;
   name?: string;
+  loading?: boolean;
 }
 
-const DEFAULT_WATCHLIST = ["AAPL", "NVDA", "MSFT", "SPY", "BTC-USD"];
+const DEFAULTS = ["AAPL", "NVDA", "MSFT", "SPY", "BTC-USD"];
 
 export default function WatchlistPage() {
+  const { t } = useApp();
+  const s = t.watchlist;
   const [items, setItems] = useState<WatchItem[]>(
-    DEFAULT_WATCHLIST.map((t) => ({ ticker: t }))
+    DEFAULTS.map((ticker) => ({ ticker, loading: true }))
   );
   const [addInput, setAddInput] = useState("");
-  const [loading, setLoading] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
-    // Load prices for all items on mount
-    items.forEach((item) => fetchPrice(item.ticker));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    DEFAULTS.forEach(fetchPrice);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function fetchPrice(ticker: string) {
-    setLoading((p) => ({ ...p, [ticker]: true }));
+    setItems((prev) =>
+      prev.map((i) => i.ticker === ticker ? { ...i, loading: true } : i)
+    );
     try {
-      const res = await fetch(`/api/analyze`, {
+      const res = await fetch("/api/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ticker, analysts: [] }),
@@ -36,35 +40,27 @@ export default function WatchlistPage() {
       if (!res.ok) throw new Error();
       const data = await res.json();
       setItems((prev) =>
-        prev.map((item) =>
-          item.ticker === ticker
-            ? {
-                ...item,
-                price: data.snapshot?.price,
-                change_pct: data.snapshot?.change_pct,
-                name: data.snapshot?.name,
-              }
-            : item
+        prev.map((i) =>
+          i.ticker === ticker
+            ? { ...i, price: data.snapshot?.price, change_pct: data.snapshot?.change_pct, name: data.snapshot?.name, loading: false }
+            : i
         )
       );
     } catch {
-      // silent — keep placeholder
-    } finally {
-      setLoading((p) => ({ ...p, [ticker]: false }));
+      setItems((prev) => prev.map((i) => i.ticker === ticker ? { ...i, loading: false } : i));
     }
   }
 
-  function addTicker() {
+  function add() {
     const t = addInput.trim().toUpperCase();
     if (!t || items.find((i) => i.ticker === t)) return;
-    const newItem: WatchItem = { ticker: t };
-    setItems((p) => [...p, newItem]);
+    setItems((prev) => [...prev, { ticker: t, loading: true }]);
     setAddInput("");
     fetchPrice(t);
   }
 
-  function removeTicker(ticker: string) {
-    setItems((p) => p.filter((i) => i.ticker !== ticker));
+  function remove(ticker: string) {
+    setItems((prev) => prev.filter((i) => i.ticker !== ticker));
   }
 
   return (
@@ -72,77 +68,55 @@ export default function WatchlistPage() {
       <div className="container">
         <div className={styles.header}>
           <div>
-            <p className={styles.eyebrow}>Vaš watchlist</p>
-            <h1 className={styles.title}>Praćene pozicije</h1>
+            <span className="eyebrow">{s.eyebrow}</span>
+            <h1 className={styles.title}>{s.title}</h1>
           </div>
-
-          <form
-            className={styles.addForm}
-            onSubmit={(e) => { e.preventDefault(); addTicker(); }}
-          >
+          <form className={styles.addForm} onSubmit={(e) => { e.preventDefault(); add(); }}>
             <input
               className={styles.addInput}
               value={addInput}
               onChange={(e) => setAddInput(e.target.value.toUpperCase())}
-              placeholder="Dodaj ticker…"
+              placeholder={s.addPlaceholder}
               maxLength={12}
               aria-label="Dodaj ticker"
             />
-            <button className={styles.addBtn} type="submit">Dodaj</button>
+            <button className={styles.addBtn} type="submit">{s.addBtn}</button>
           </form>
         </div>
 
-        <div className={styles.divider} />
+        <div className="divider" />
 
         <table className={styles.table}>
           <thead>
             <tr>
               <th>Ticker</th>
               <th>Naziv</th>
-              <th className={styles.right}>Cena</th>
-              <th className={styles.right}>Promena</th>
-              <th className={styles.right}>Akcija</th>
+              <th className={styles.r}>Cena</th>
+              <th className={styles.r}>%</th>
+              <th className={styles.r} />
             </tr>
           </thead>
           <tbody>
             {items.map((item) => (
               <tr key={item.ticker} className={styles.row}>
                 <td>
-                  <a href={`/analiza?ticker=${item.ticker}`} className={styles.tickerLink}>
-                    {item.ticker}
-                  </a>
+                  <a href={`/analiza?ticker=${item.ticker}`} className={styles.sym}>{item.ticker}</a>
                 </td>
-                <td className={styles.nameCell}>
-                  {loading[item.ticker] ? (
-                    <span className={styles.skeleton} />
-                  ) : (
-                    item.name || "—"
-                  )}
+                <td className="muted">
+                  {item.loading ? <Skel w={100} /> : (item.name ?? "—")}
                 </td>
-                <td className={`${styles.right} ${styles.priceCell}`}>
-                  {loading[item.ticker] ? (
-                    <span className={styles.skeleton} />
-                  ) : item.price != null ? (
-                    `$${item.price.toFixed(2)}`
-                  ) : "—"}
+                <td className={`${styles.r} ${styles.price}`}>
+                  {item.loading ? <Skel w={60} /> : item.price != null ? `$${item.price.toFixed(2)}` : "—"}
                 </td>
-                <td className={styles.right}>
-                  {loading[item.ticker] ? (
-                    <span className={styles.skeleton} />
-                  ) : item.change_pct != null ? (
-                    <span className={item.change_pct >= 0 ? styles.positive : styles.negative}>
+                <td className={styles.r}>
+                  {item.loading ? <Skel w={48} /> : item.change_pct != null ? (
+                    <span className={`mono ${item.change_pct >= 0 ? "positive" : "negative"}`}>
                       {item.change_pct >= 0 ? "+" : ""}{item.change_pct.toFixed(2)}%
                     </span>
                   ) : "—"}
                 </td>
-                <td className={styles.right}>
-                  <button
-                    className={styles.removeBtn}
-                    onClick={() => removeTicker(item.ticker)}
-                    aria-label={`Ukloni ${item.ticker}`}
-                  >
-                    ×
-                  </button>
+                <td className={styles.r}>
+                  <button className={styles.removeBtn} onClick={() => remove(item.ticker)} aria-label={`Ukloni ${item.ticker}`}>×</button>
                 </td>
               </tr>
             ))}
@@ -150,11 +124,13 @@ export default function WatchlistPage() {
         </table>
 
         {items.length === 0 && (
-          <div className={styles.empty}>
-            <p>Watchlist je prazan. Dodajte ticker iznad.</p>
-          </div>
+          <p className={`${styles.empty} muted`}>{s.emptyMsg}</p>
         )}
       </div>
     </div>
   );
+}
+
+function Skel({ w }: { w: number }) {
+  return <span className={styles.skel} style={{ width: w }} />;
 }
