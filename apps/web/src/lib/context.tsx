@@ -1,10 +1,10 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { strings, type Locale } from "./i18n";
+import { DEFAULT_LOCALE, strings, type Locale } from "./i18n";
 
 // Union of both locales — consumer receives whichever is active
-type AnyStrings = (typeof strings)[Locale];
+type AnyStrings = any;
 
 interface AppContextValue {
   locale: Locale;
@@ -17,7 +17,8 @@ interface AppContextValue {
 const AppContext = createContext<AppContextValue | null>(null);
 
 export function AppProvider({ children }: { children: ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>("sr");
+  const [locale, setLocaleState] = useState<Locale>(DEFAULT_LOCALE);
+  // legacy default marker: "sr"
   const [theme, setTheme] = useState<"dark" | "light">("dark");
 
   // Persist + apply theme
