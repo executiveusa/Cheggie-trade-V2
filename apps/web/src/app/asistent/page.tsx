@@ -7,7 +7,7 @@ import styles from "./page.module.css";
 interface Message { role: "user" | "assistant"; content: string; }
 
 export default function AsistentPage() {
-  const { t } = useApp();
+  const { t, locale } = useApp();
   const s = t.asistent;
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -37,7 +37,7 @@ export default function AsistentPage() {
       const data = await res.json();
       setMessages([...next, { role: "assistant", content: data.response }]);
     } catch {
-      setMessages([...next, { role: "assistant", content: "Privremeno nedostupan. Pokušajte ponovo." }]);
+      setMessages([...next, { role: "assistant", content: s.errorFallback }]);
     } finally {
       setLoading(false);
     }
@@ -51,7 +51,7 @@ export default function AsistentPage() {
     const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SR) return;
     const rec = new SR();
-    rec.lang = "sr-RS";
+    rec.lang = locale === "es" ? "es-ES" : locale === "en" ? "en-US" : "sr-RS";
     rec.interimResults = false;
     rec.onstart = () => setListening(true);
     rec.onend   = () => setListening(false);
@@ -103,15 +103,15 @@ export default function AsistentPage() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKey}
-              placeholder="Unesite pitanje…"
+              placeholder={s.inputPlaceholder}
               rows={1}
-              aria-label="Poruka"
+              aria-label={s.ariaMessage}
             />
             <div className={styles.inputActions}>
               <button
                 className={`${styles.iconBtn} ${listening ? styles.active : ""}`}
                 onClick={startVoice}
-                aria-label="Glasovni unos"
+                aria-label={s.ariaVoiceInput}
                 type="button"
               >
                 <MicIcon />
@@ -121,7 +121,7 @@ export default function AsistentPage() {
                 onClick={() => send(input)}
                 disabled={!input.trim() || loading}
                 type="button"
-                aria-label="Pošalji"
+                aria-label={s.ariaSend}
               >
                 <SendIcon />
               </button>

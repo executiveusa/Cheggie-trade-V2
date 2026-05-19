@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useApp } from "@/lib/context";
 import styles from "./page.module.css";
 
@@ -26,7 +27,7 @@ export default function IzvestajiPage() {
         <div className="divider" />
         <div className={styles.list}>
           {REPORTS.map((r) => (
-            <a key={r.id} href={`/analiza?ticker=${r.ticker}`} className={styles.item}>
+            <Link key={r.id} href={`/analiza?ticker=${r.ticker}`} className={styles.item}>
               <div className={styles.itemMeta}>
                 <span className={styles.itemType}>{r.type}</span>
                 <span className={styles.itemDate}>{r.date}</span>
@@ -36,7 +37,7 @@ export default function IzvestajiPage() {
                 <h2 className={styles.itemTitle}>{r.title}</h2>
               </div>
               <span className={styles.arrow} aria-hidden="true">→</span>
-            </a>
+            </Link>
           ))}
         </div>
       </div>

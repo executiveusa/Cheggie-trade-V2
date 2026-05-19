@@ -115,6 +115,6 @@
 
 @media (max-width: 900px) { .links { display: none; } }
 @media (max-width: 560px) {
-  .toggle:first-child { display: none; } /* hide lang on smallest screens */
+  .cta { display: none; } /* preserve locale + theme controls */
   .inner { gap: var(--sp-3); }
 }

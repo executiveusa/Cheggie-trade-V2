@@ -60,6 +60,8 @@ export const strings = {
       errorMsg: "Analiza trenutno nije dostupna.",
       decisionLabel: "Signal",
       newsLabel: "Relevantne vesti",
+      tickerAria: "Ticker simbol",
+      loadingAgents: ["Tržište", "Vesti", "Fundamentali", "Rizik"],
     },
     // Asistent
     asistent: {
@@ -73,6 +75,11 @@ export const strings = {
         "Šta je stop-loss i kada ga koristim?",
         "Koja je razlika između P/E i P/S?",
       ],
+      errorFallback: "Privremeno nedostupan. Pokušajte ponovo.",
+      inputPlaceholder: "Unesite pitanje…",
+      ariaMessage: "Poruka",
+      ariaVoiceInput: "Glasovni unos",
+      ariaSend: "Pošalji",
     },
     // Watchlist
     watchlist: {
@@ -157,6 +164,8 @@ export const strings = {
       errorMsg: "Análisis temporalmente no disponible.",
       decisionLabel: "Señal",
       newsLabel: "Noticias relevantes",
+      tickerAria: "Símbolo del ticker",
+      loadingAgents: ["Mercado", "Noticias", "Fundamentos", "Riesgo"],
     },
     // Asistente
     asistent: {
@@ -170,6 +179,11 @@ export const strings = {
         "¿Qué es un stop-loss y cuándo lo uso?",
         "¿Cuál es la diferencia entre P/E y P/S?",
       ],
+      errorFallback: "Temporalmente no disponible. Inténtalo de nuevo.",
+      inputPlaceholder: "Escribe tu pregunta…",
+      ariaMessage: "Mensaje",
+      ariaVoiceInput: "Entrada de voz",
+      ariaSend: "Enviar",
     },
     // Watchlist
     watchlist: {
@@ -247,6 +261,8 @@ export const strings = {
       errorMsg: "Analysis temporarily unavailable.",
       decisionLabel: "Signal",
       newsLabel: "Relevant news",
+      tickerAria: "Ticker symbol",
+      loadingAgents: ["Market", "News", "Fundamentals", "Risk"],
     },
     asistent: {
       eyebrow: "Your trading assistant",
@@ -259,6 +275,11 @@ export const strings = {
         "What is a stop-loss and when do I use it?",
         "What's the difference between P/E and P/S?",
       ],
+      errorFallback: "Temporarily unavailable. Please try again.",
+      inputPlaceholder: "Type your question…",
+      ariaMessage: "Message",
+      ariaVoiceInput: "Voice input",
+      ariaSend: "Send",
     },
     watchlist: {
       eyebrow: "Your positions",

@@ -15,43 +15,43 @@
 }
 
 /* ── Line animation ──────────────────────────────────────────── */
-@keyframes dashFlow {
+@keyframes dash-flow {
   from { stroke-dashoffset: 16; }
   to   { stroke-dashoffset: 0; }
 }
 
 .line {
-  animation: dashFlow 1.2s linear infinite;
+  animation: dash-flow 1.2s linear infinite;
 }
 
 /* ── Node entrance ───────────────────────────────────────────── */
-@keyframes nodeIn {
+@keyframes node-in {
   from { opacity: 0; transform: scale(0.6); }
   to   { opacity: 1; transform: scale(1); }
 }
 
 .agentNode {
-  animation: nodeIn 0.5s var(--ease) both;
+  animation: node-in 0.5s var(--ease) both;
   transform-origin: center;
 }
 
 /* ── Pulse rings ─────────────────────────────────────────────── */
-@keyframes ringPulse {
+@keyframes ring-pulse {
   0%   { r: 22; opacity: 0.4; }
   100% { r: 30; opacity: 0; }
 }
 
 .pulse {
-  animation: ringPulse 2s ease-out infinite;
+  animation: ring-pulse 2s ease-out infinite;
 }
 
-@keyframes centerPulse {
+@keyframes center-pulse {
   0%   { r: 32; opacity: 0.5; }
   100% { r: 44; opacity: 0; }
 }
 
 .centerPulse {
-  animation: centerPulse 2.5s ease-out infinite;
+  animation: center-pulse 2.5s ease-out infinite;
 }
 
 /* ── Indicators ──────────────────────────────────────────────── */
@@ -63,7 +63,7 @@
   max-width: 240px;
 }
 
-@keyframes indicatorIn {
+@keyframes indicator-in {
   from { opacity: 0; transform: translateX(-8px); }
   to   { opacity: 1; transform: translateX(0); }
 }
@@ -72,7 +72,7 @@
   display: flex;
   align-items: center;
   gap: var(--sp-2);
-  animation: indicatorIn 0.5s var(--ease) both;
+  animation: indicator-in 0.5s var(--ease) both;
 }
 
 .dot {

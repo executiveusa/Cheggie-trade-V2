@@ -24,8 +24,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   // Persist + apply theme
   useEffect(() => {
-    const saved = localStorage.getItem("ct-theme") as "dark" | "light" | null;
-    if (saved) setTheme(saved);
+    const saved = localStorage.getItem("ct-theme");
+    if (saved === "dark" || saved === "light") setTheme(saved);
   }, []);
 
   useEffect(() => {

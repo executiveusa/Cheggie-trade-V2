@@ -85,7 +85,7 @@ html {
   color-scheme: dark;
 }
 
-[data-theme="light"] html { color-scheme: light; }
+html[data-theme="light"] { color-scheme: light; }
 
 body {
   background: var(--bg);
@@ -131,7 +131,7 @@ a { color: inherit; text-decoration: none; }
 .sr-only {
   position: absolute; width: 1px; height: 1px;
   padding: 0; margin: -1px; overflow: hidden;
-  clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+  clip-path: inset(50%); white-space: nowrap; border: 0;
 }
 
 .accent   { color: var(--accent); }
@@ -159,11 +159,11 @@ a { color: inherit; text-decoration: none; }
 .divider { height: 1px; background: var(--border); }
 
 /* ── Motion ───────────────────────────────────────────────────── */
-@keyframes fadeUp {
+@keyframes fade-up {
   from { opacity: 0; transform: translateY(16px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-@keyframes fadeIn {
+@keyframes fade-in {
   from { opacity: 0; }
   to   { opacity: 1; }
 }
@@ -175,8 +175,8 @@ a { color: inherit; text-decoration: none; }
   to { transform: rotate(360deg); }
 }
 
-.fade-up { animation: fadeUp 0.65s var(--ease) both; }
-.fade-in { animation: fadeIn 0.4s var(--ease) both; }
+.fade-up { animation: fade-up 0.65s var(--ease) both; }
+.fade-in { animation: fade-in 0.4s var(--ease) both; }
 
 @media (prefers-reduced-motion: reduce) {
   .fade-up, .fade-in { animation: none; }

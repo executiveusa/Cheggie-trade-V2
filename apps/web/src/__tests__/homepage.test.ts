@@ -141,7 +141,7 @@ describe("Design system — tokens (globals.css)", () => {
   });
 
   test("no forbidden fonts (Arial, Helvetica, Roboto, Cormorant)", () => {
-    expect(css).not.toMatch(/font-family[^;]*(Arial|Helvetica|Roboto|Cormorant Garamond)/i);
+    expect(css).not.toMatch(/font-family[^;]*(Arial|Helvetica|Roboto|Cormorant\s+Garamond)/i);
   });
 });
 
@@ -216,7 +216,7 @@ describe("Anti-pattern guard — no card grids", () => {
 
   test("homepage does not use grid with >4 equal columns (card grid)", () => {
     // grid-template-columns: repeat(N, 1fr) where N>4 is forbidden
-    const cardGridPattern = /grid-template-columns\s*:\s*repeat\s*\(\s*[5-9]\s*,/;
+    const cardGridPattern = /grid-template-columns\s*:\s*repeat\s*\(\s*([5-9]|\d{2,})\s*,/;
     expect(homeCSS).not.toMatch(cardGridPattern);
   });
 

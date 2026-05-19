@@ -134,7 +134,7 @@
   flex-wrap: wrap;
 }
 
-@keyframes agentBlink {
+@keyframes agent-blink {
   0%, 100% { opacity: 0.3; }
   50%       { opacity: 1; }
 }
@@ -146,7 +146,7 @@
   color: var(--accent);
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  animation: agentBlink 1.8s ease-in-out infinite both;
+  animation: agent-blink 1.8s ease-in-out infinite both;
 }
 
 .loadingMeta {

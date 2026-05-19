@@ -101,4 +101,4 @@ export const rules = {
 } as const;
 
 export type Theme = "dark" | "light";
-export type Locale = "sr" | "en";
+export type Locale = "sr" | "es" | "en";

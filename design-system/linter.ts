@@ -37,7 +37,8 @@ function scanFile(filePath: string): Violation[] {
     const jsxStrings = (content.match(/>([^<{]+)</g) ?? []).join(" ");
     rules.forbiddenTerms.forEach((term) => {
       // word-boundary match on rendered text strings
-      const re = new RegExp(`\\b${term}\\b`, "i");
+      const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const re = new RegExp(`\\b${escaped}\\b`, "i");
       if (re.test(jsxStrings)) {
         violations.push({
           file: filePath,

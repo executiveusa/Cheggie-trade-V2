@@ -30,7 +30,7 @@ export default function Nav() {
             <li key={href}>
               <Link
                 href={href}
-                className={`${styles.link} ${pathname?.startsWith(href) ? styles.active : ""}`}
+                className={`${styles.link} ${(pathname === href || pathname?.startsWith(`${href}/`)) ? styles.active : ""}`}
               >
                 {label}
               </Link>
