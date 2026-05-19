@@ -40,8 +40,14 @@ export default function Nav() {
         </ul>
 
         <div className={styles.controls}>
-          {/* Language toggle uses setLocale in LocaleSwitcher */}
-          <LocaleSwitcher />
+          {/* Language toggle — cycles sr → es → en → sr */}
+          <button
+            className={styles.toggle}
+            onClick={() => setLocale(locale === "sr" ? "es" : locale === "es" ? "en" : "sr")}
+            aria-label="Switch language"
+          >
+            {locale === "sr" ? "ES" : locale === "es" ? "EN" : "SR"}
+          </button>
 
           {/* Theme toggle */}
           <button

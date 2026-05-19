@@ -3,8 +3,10 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { DEFAULT_LOCALE, strings, type Locale } from "./i18n";
 
-// Union of both locales — consumer receives whichever is active
-type AnyStrings = any;
+// Union of all locales — consumer receives whichever is active
+type AnyStrings = (typeof strings)[Locale];
+
+const VALID_LOCALES: Locale[] = ["sr", "es", "en"];
 
 interface AppContextValue {
   locale: Locale;
@@ -35,7 +37,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   // Persist locale
   useEffect(() => {
     const saved = localStorage.getItem("ct-locale") as Locale | null;
-    if (saved) setLocaleState(saved);
+    if (saved && VALID_LOCALES.includes(saved)) setLocaleState(saved);
   }, []);
 
   function setLocale(l: Locale) {
