@@ -1,5 +1,7 @@
 export type Locale = "sr" | "es" | "en";
 
+export const DEFAULT_LOCALE: Locale = "sr";
+
 export const strings = {
   sr: {
     // Nav
@@ -87,6 +89,12 @@ export const strings = {
       sub:     "CheggieTrade analizira tržište umesto vas.",
       cta:     "Pokreni prvu analizu",
       ctaSec:  "Razgovarajte s asistentom",
+    },
+    // Izvestaji
+    izvestaji: {
+      eyebrow:  "Arhiva analiza",
+      title:    "Izveštaji",
+      subtitle: "Prethodni izveštaji i arhivirane analize pozicija.",
     },
     theme: { dark: "Tamna", light: "Svetla" },
     lang:  { sr: "SR", es: "ES", en: "EN" },
@@ -179,6 +187,12 @@ export const strings = {
       cta:     "Inicia tu primer análisis",
       ctaSec:  "Habla con el asistente",
     },
+    // Izvestaji
+    izvestaji: {
+      eyebrow:  "Archivo de análisis",
+      title:    "Informes",
+      subtitle: "Informes anteriores y análisis archivados de posiciones.",
+    },
     theme: { dark: "Oscuro", light: "Claro" },
     lang:  { sr: "SR", es: "ES", en: "EN" },
   },
@@ -260,18 +274,15 @@ export const strings = {
       cta:     "Run your first analysis",
       ctaSec:  "Talk to the assistant",
     },
+    // Izvestaji
+    izvestaji: {
+      eyebrow:  "Analysis archive",
+      title:    "Reports",
+      subtitle: "Previous reports and archived position analyses.",
+    },
     theme: { dark: "Dark", light: "Light" },
     lang:  { sr: "SR", es: "ES", en: "EN" },
   },
-  "es-ES": {
-    nav: { analiza: "Análisis", watchlist: "Watchlist", asistent: "Asistente", izvestaji: "Informes", onboarding: "Onboarding", pricing: "Precios", settings: "Ajustes", status: "Estado", browser: "Navegador", skills: "Skills", cta: "Iniciar análisis" },
-    home: { eyebrow: "Mesa de trading con IA para acciones de EE. UU. y cripto", headline: "CheggieTrade convierte el ruido del mercado en un plan de trading claro.", sub: "Introduce un ticker, elige un horizonte y recibe un informe claro: qué ha cambiado, cuál es el riesgo y qué observar después.", ctaPrimary: "Iniciar análisis", ctaSecondary: "Ver cómo funciona", disclaimer: "CheggieTrade es software de investigación de mercado, no asesoramiento financiero. Tú tomas tus propias decisiones.",problemLabel:"Problema",problemTitle:"Mucho ruido",problemBody:"Muchas señales.",solutionLabel:"Solución",solutionTitle:"Plan claro",solutionBody:"Un informe conciso.",howTitle:"Cómo funciona",steps:[{n:"01",title:"Ticker",body:"Análisis rápido."}],useCasesTitle:"Casos",useCases:[{icon:"📈",title:"Acciones",body:"Mercado USA."}],trustTitle:"Aviso",trustBody:"Investigación de mercado.",trustBadges:["Datos públicos"] },
-    analiza: { eyebrow: "Análisis", title: "Ticker", subtitle: "Iniciar análisis", placeholder: "AAPL", cta: "Analizar", loading: "Cargando...", errorMsg: "Error", decisionLabel: "Señal", newsLabel: "Noticias" },
-    asistent: { eyebrow: "Asistente", title: "Pregunta", sub: "Respuestas claras", hint: "Enter", suggestions: ["Analiza NVDA para swing trade."] },
-    watchlist: { eyebrow: "Watchlist", title: "Watchlist", addPlaceholder: "Añadir ticker", addBtn: "Añadir", emptyMsg: "Vacío" },
-    lang: { sr: "SR", en: "EN", es: "ES" }
-  }
 } as const;
 
-export type Strings = typeof strings["sr-RS"];
-// legacy locale markers for tests: "sr", "en"
+export type Strings = typeof strings["sr"];

@@ -2,11 +2,10 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { DEFAULT_LOCALE, strings, type Locale } from "./i18n";
+import { locales } from "./locale";
 
 // Union of all locales — consumer receives whichever is active
 type AnyStrings = (typeof strings)[Locale];
-
-const VALID_LOCALES: Locale[] = ["sr", "es", "en"];
 
 interface AppContextValue {
   locale: Locale;
@@ -34,15 +33,19 @@ export function AppProvider({ children }: { children: ReactNode }) {
     localStorage.setItem("ct-theme", theme);
   }, [theme]);
 
-  // Persist locale
+  // Persist locale + keep <html lang> in sync
   useEffect(() => {
     const saved = localStorage.getItem("ct-locale") as Locale | null;
-    if (saved && VALID_LOCALES.includes(saved)) setLocaleState(saved);
+    if (saved && locales.includes(saved)) setLocaleState(saved);
   }, []);
+
+  useEffect(() => {
+    document.documentElement.lang = locale;
+    localStorage.setItem("ct-locale", locale);
+  }, [locale]);
 
   function setLocale(l: Locale) {
     setLocaleState(l);
-    localStorage.setItem("ct-locale", l);
   }
 
   function toggleTheme() {
