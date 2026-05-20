@@ -10,12 +10,12 @@ export const strings = {
       watchlist:  "Watchlist",
       asistent:   "Asistent",
       izvestaji:  "Izveštaji",
-      onboarding: "Onboarding",
+      onboarding: "Uvod",
       cta:        "Pokreni analizu",
     },
     // Homepage
     home: {
-      eyebrow:   "AI trading desk za Balkan tržište",
+      eyebrow:   "AI platforma za Balkansko tržište",
       headline:  "CheggieTrade pretvara tržišnu buku u jasan trading plan.",
       sub:       "Više AI analitičara zajedno donosi odluke — vi dobijate signal, ne buku.",
       ctaPrimary: "Pokreni analizu",
@@ -26,14 +26,14 @@ export const strings = {
       problemBody:  "Tržišta su puna kontradiktornih signala. Analitičari se svađaju. Vest s Twittera poništava fundamentale. Vi stojite sa otvorenim brokerom i ne znate šta da radite.",
       solutionLabel: "Rešenje",
       solutionTitle: "Jedan jasan signal iz svih izvora.",
-      solutionBody:  "CheggieTrade pokreće više AI analitičara simultano — svaki gleda drugu dimenziju tržišta. Zatim ih Risk Layer filtrira. Vi dobijate jednu rečenicu: kupuj, drži, ili prodaj.",
+      solutionBody:  "CheggieTrade pokreće više AI analitičara simultano — svaki gleda drugu dimenziju tržišta. Zatim ih sloj za upravljanje rizikom filtrira. Vi dobijate jednu rečenicu: kupuj, drži, ili prodaj.",
       // How it works
       howTitle: "Kako radi",
       steps: [
         { n: "01", title: "Unesi ticker",          body: "Ukucaj simbol dionice ili kripta." },
         { n: "02", title: "Izaberi strategiju",     body: "Konzervativna, umjerena ili agresivna." },
         { n: "03", title: "AI agenti analiziraju",  body: "Fundamentali, vesti, sentiment — simultano." },
-        { n: "04", title: "Risk layer proverava",   body: "Nezavisni sloj filtrira odluke." },
+        { n: "04", title: "Sloj rizika proverava",   body: "Nezavisni sloj filtrira odluke." },
         { n: "05", title: "Dobijaš jasan signal",   body: "Kupuj, drži, ili prodaj — sa razlogom." },
       ],
       // Use cases
@@ -71,7 +71,7 @@ export const strings = {
       hint:    "Enter za slanje",
       suggestions: [
         "Koji sektor je najjači ovog meseca?",
-        "Kako da čitam earnings izveštaj?",
+        "Kako da čitam izveštaj o zaradama?",
         "Šta je stop-loss i kada ga koristim?",
         "Koja je razlika između P/E i P/S?",
       ],
