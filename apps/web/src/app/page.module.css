@@ -160,7 +160,6 @@
 }
 
 /* ── How It Works ─────────────────────────────────────────────── */
-.howSection {}
 
 .steps {
   margin-top: var(--sp-8);
@@ -269,7 +268,6 @@
 }
 
 /* ── Trust ────────────────────────────────────────────────────── */
-.trustSection {}
 
 .trustInner {
   display: flex;

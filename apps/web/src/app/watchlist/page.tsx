@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { useApp } from "@/lib/context";
 import styles from "./page.module.css";
 
@@ -52,11 +53,11 @@ export default function WatchlistPage() {
   }
 
   function add() {
-    const t = addInput.trim().toUpperCase();
-    if (!t || items.find((i) => i.ticker === t)) return;
-    setItems((prev) => [...prev, { ticker: t, loading: true }]);
+    const ticker = addInput.trim().toUpperCase();
+    if (!ticker || items.find((i) => i.ticker === ticker)) return;
+    setItems((prev) => [...prev, { ticker, loading: true }]);
     setAddInput("");
-    fetchPrice(t);
+    fetchPrice(ticker);
   }
 
   function remove(ticker: string) {
@@ -100,7 +101,7 @@ export default function WatchlistPage() {
             {items.map((item) => (
               <tr key={item.ticker} className={styles.row}>
                 <td>
-                  <a href={`/analiza?ticker=${item.ticker}`} className={styles.sym}>{item.ticker}</a>
+                  <Link href={`/analiza?ticker=${item.ticker}`} className={styles.sym}>{item.ticker}</Link>
                 </td>
                 <td className="muted">
                   {item.loading ? <Skel w={100} /> : (item.name ?? "—")}

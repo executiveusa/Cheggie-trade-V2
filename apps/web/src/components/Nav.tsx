@@ -4,12 +4,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LogoWordmark } from "./Logo";
 import { useApp } from "@/lib/context";
-import LocaleSwitcher from "./LocaleSwitcher";
 import styles from "./Nav.module.css";
 
 export default function Nav() {
   const pathname = usePathname();
-  const { t, theme, toggleTheme } = useApp();
+  const { t, locale, setLocale, theme, toggleTheme } = useApp();
 
   const links = [
     { href: "/analiza",    label: t.nav.analiza },
@@ -31,7 +30,7 @@ export default function Nav() {
             <li key={href}>
               <Link
                 href={href}
-                className={`${styles.link} ${pathname?.startsWith(href) ? styles.active : ""}`}
+                className={`${styles.link} ${(pathname === href || pathname?.startsWith(`${href}/`)) ? styles.active : ""}`}
               >
                 {label}
               </Link>
@@ -40,8 +39,14 @@ export default function Nav() {
         </ul>
 
         <div className={styles.controls}>
-          {/* Language toggle uses setLocale in LocaleSwitcher */}
-          <LocaleSwitcher />
+          {/* Language toggle — cycles sr → es → en → sr */}
+          <button
+            className={styles.toggle}
+            onClick={() => setLocale(locale === "sr" ? "es" : locale === "es" ? "en" : "sr")}
+            aria-label="Switch language"
+          >
+            {locale === "sr" ? "ES" : locale === "es" ? "EN" : "SR"}
+          </button>
 
           {/* Theme toggle */}
           <button

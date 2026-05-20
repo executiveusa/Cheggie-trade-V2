@@ -79,7 +79,7 @@ export default function AnalizaPage() {
               placeholder={s.placeholder}
               maxLength={12}
               autoFocus
-              aria-label="Ticker"
+              aria-label={s.tickerAria}
               autoComplete="off"
               autoCapitalize="characters"
             />
@@ -113,7 +113,7 @@ export default function AnalizaPage() {
           <div className={styles.loadingBlock}>
             <div className={styles.loadingBar} />
             <div className={styles.loadingAgents}>
-              {["Market", "News", "Fundamentals", "Risk"].map((a, i) => (
+              {s.loadingAgents.map((a, i) => (
                 <span
                   key={a}
                   className={styles.loadingAgent}

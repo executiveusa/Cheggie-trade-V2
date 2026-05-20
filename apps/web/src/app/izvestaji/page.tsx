@@ -1,3 +1,7 @@
+"use client";
+
+import Link from "next/link";
+import { useApp } from "@/lib/context";
 import styles from "./page.module.css";
 
 const REPORTS = [
@@ -10,18 +14,20 @@ const REPORTS = [
 ];
 
 export default function IzvestajiPage() {
+  const { t } = useApp();
+
   return (
     <div className={styles.page}>
       <div className="container">
         <div className={styles.header}>
-          <span className="eyebrow">Arhiva analiza</span>
-          <h1 className={styles.title}>Izveštaji</h1>
-          <p className={styles.subtitle}>Prethodni izveštaji i arhivirane analize pozicija.</p>
+          <span className="eyebrow">{t.izvestaji.eyebrow}</span>
+          <h1 className={styles.title}>{t.izvestaji.title}</h1>
+          <p className={styles.subtitle}>{t.izvestaji.subtitle}</p>
         </div>
         <div className="divider" />
         <div className={styles.list}>
           {REPORTS.map((r) => (
-            <a key={r.id} href={`/analiza?ticker=${r.ticker}`} className={styles.item}>
+            <Link key={r.id} href={`/analiza?ticker=${r.ticker}`} className={styles.item}>
               <div className={styles.itemMeta}>
                 <span className={styles.itemType}>{r.type}</span>
                 <span className={styles.itemDate}>{r.date}</span>
@@ -31,7 +37,7 @@ export default function IzvestajiPage() {
                 <h2 className={styles.itemTitle}>{r.title}</h2>
               </div>
               <span className={styles.arrow} aria-hidden="true">→</span>
-            </a>
+            </Link>
           ))}
         </div>
       </div>

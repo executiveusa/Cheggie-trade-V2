@@ -1,6 +1,6 @@
 import { DEFAULT_LOCALE, type Locale } from "./i18n";
 
-export const locales: Locale[] = ["sr-RS", "en-US", "es-ES"];
+export const locales: Locale[] = ["sr", "es", "en"];
 
 export function nextLocale(current: Locale): Locale {
   const idx = locales.indexOf(current);
