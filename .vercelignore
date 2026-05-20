@@ -1,0 +1,15 @@
+# Local environment/secrets
+.env*
+!.env.example
+
+# Build outputs
+**/.next
+**/dist
+**/coverage
+
+# Local audit artifacts
+.audit
+
+# Python caches
+**/__pycache__
+**/*.pyc
