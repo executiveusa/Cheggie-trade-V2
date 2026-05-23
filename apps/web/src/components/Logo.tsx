@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 interface Props {
   size?: number;
   color?: string;
@@ -45,6 +47,20 @@ export function KnightMark({ size = 32, color = "currentColor", className = "" }
   );
 }
 
+export function LogoImage({ size = 40, className = "" }: { size?: number; className?: string }) {
+  return (
+    <Image
+      src="/logo.png"
+      alt="CheggieTrade"
+      width={size}
+      height={size}
+      priority
+      className={className}
+      style={{ width: size, height: "auto" }}
+    />
+  );
+}
+
 export function LogoWordmark({ className = "" }: { className?: string }) {
   return (
     <span
@@ -52,7 +68,7 @@ export function LogoWordmark({ className = "" }: { className?: string }) {
       style={{
         display: "inline-flex",
         alignItems: "center",
-        gap: "0.5rem",
+        gap: "0.75rem",
         fontFamily: "var(--font-display)",
         fontWeight: 600,
         fontSize: "1.125rem",
@@ -60,7 +76,7 @@ export function LogoWordmark({ className = "" }: { className?: string }) {
         color: "var(--text-1)",
       }}
     >
-      <KnightMark size={26} color="var(--accent)" />
+      <LogoImage size={28} />
       Cheggie<span style={{ color: "var(--accent)" }}>Trade</span>
     </span>
   );
