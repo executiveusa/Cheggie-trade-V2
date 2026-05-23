@@ -1,0 +1,271 @@
+.page {
+  padding: var(--sp-16) 0 var(--sp-20);
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-8);
+}
+
+.title {
+  font-size: clamp(2.4rem, 4vw, 3.8rem);
+  font-weight: 600;
+  color: var(--text-1);
+  letter-spacing: -0.03em;
+}
+
+.subtitle {
+  font-size: 1rem;
+  color: var(--text-2);
+  font-weight: 300;
+  max-width: 40ch;
+}
+
+/* ── Billing toggle ────────────────────────────────────────────── */
+.toggleWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-1);
+  margin-bottom: var(--sp-10);
+  padding: 4px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.toggleBtn {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-3);
+  background: none;
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--text-2);
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s var(--ease), color 0.15s var(--ease);
+}
+
+.toggleBtn:hover {
+  color: var(--text-1);
+}
+
+.toggleActive {
+  background: var(--bg);
+  color: var(--text-1);
+}
+
+.saveBadge {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  padding: 2px 6px;
+  background: var(--accent-faint);
+  color: var(--accent);
+  border-radius: var(--radius-sm);
+  text-transform: uppercase;
+}
+
+/* ── Tiers ─────────────────────────────────────────────────────── */
+.tiers {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--sp-4);
+  margin-bottom: var(--sp-10);
+}
+
+.tier {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: var(--sp-6);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  transition: border-color 0.15s var(--ease);
+}
+
+.tier:hover {
+  border-color: var(--border-alt);
+}
+
+.tierPopular {
+  border-color: var(--accent);
+  background: linear-gradient(
+    180deg,
+    var(--accent-faint) 0%,
+    var(--surface) 40%
+  );
+}
+
+.tierPopular:hover {
+  border-color: var(--accent);
+}
+
+.popularBadge {
+  position: absolute;
+  top: calc(var(--sp-4) * -1);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 6px 12px;
+  background: var(--accent);
+  color: var(--bg);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: var(--radius-full);
+}
+
+.tierName {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-1);
+  letter-spacing: -0.02em;
+  margin-bottom: var(--sp-1);
+}
+
+.tierDesc {
+  font-size: 0.875rem;
+  color: var(--text-2);
+  font-weight: 300;
+  margin-bottom: var(--sp-5);
+  max-width: none;
+}
+
+.priceRow {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  margin-bottom: var(--sp-6);
+}
+
+.priceValue {
+  font-family: var(--font-display);
+  font-size: 3rem;
+  font-weight: 600;
+  color: var(--text-1);
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.pricePeriod {
+  font-size: 0.875rem;
+  color: var(--text-3);
+  font-weight: 400;
+}
+
+/* ── Features ──────────────────────────────────────────────────── */
+.features {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-6);
+  flex: 1;
+}
+
+.feature {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-2);
+  font-size: 0.875rem;
+  color: var(--text-2);
+  line-height: 1.5;
+}
+
+.checkIcon {
+  flex-shrink: 0;
+  color: var(--accent);
+  margin-top: 2px;
+}
+
+/* ── CTA ───────────────────────────────────────────────────────── */
+.tierCta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 var(--sp-4);
+  background: none;
+  border: 1px solid var(--border-alt);
+  border-radius: var(--radius-sm);
+  color: var(--text-1);
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.15s var(--ease), background 0.15s var(--ease);
+}
+
+.tierCta:hover {
+  border-color: var(--text-2);
+}
+
+.tierCtaPrimary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--bg);
+}
+
+.tierCtaPrimary:hover {
+  background: var(--accent-dim);
+  border-color: var(--accent-dim);
+}
+
+/* ── Disclaimer ────────────────────────────────────────────────── */
+.disclaimer {
+  text-align: center;
+  font-size: 0.8125rem;
+  color: var(--text-3);
+  max-width: 50ch;
+  margin: 0 auto;
+}
+
+/* ── Responsive ────────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .tiers {
+    gap: var(--sp-3);
+  }
+  .tier {
+    padding: var(--sp-5);
+  }
+}
+
+@media (max-width: 768px) {
+  .tiers {
+    grid-template-columns: 1fr;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .tierPopular {
+    order: -1;
+  }
+}
+
+@media (max-width: 480px) {
+  .toggleWrap {
+    flex-direction: column;
+    width: 100%;
+    max-width: 280px;
+  }
+  .toggleBtn {
+    width: 100%;
+    justify-content: center;
+  }
+}
