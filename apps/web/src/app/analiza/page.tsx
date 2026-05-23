@@ -17,13 +17,30 @@ interface Result {
 
 const EXAMPLES = ["AAPL", "NVDA", "TSLA", "BTC-USD", "SPY"];
 
+const AGENT_LABELS = {
+  sr: {
+    analystsLabel: "Analiza po agentima",
+    agents: { market: "Tržište", news: "Vesti", fundamentals: "Fundamentali", risk: "Rizik" },
+  },
+  es: {
+    analystsLabel: "Análisis por agentes",
+    agents: { market: "Mercado", news: "Noticias", fundamentals: "Fundamentos", risk: "Riesgo" },
+  },
+  en: {
+    analystsLabel: "Analysis by agents",
+    agents: { market: "Market", news: "News", fundamentals: "Fundamentals", risk: "Risk" },
+  },
+};
+
 export default function AnalizaPage() {
-  const { t } = useApp();
+  const { t, locale } = useApp();
   const s = t.analiza;
+  const agentLabels = AGENT_LABELS[locale];
   const [ticker, setTicker] = useState("");
   const [state, setState] = useState<State>("idle");
   const [result, setResult] = useState<Result | null>(null);
   const [elapsed, setElapsed] = useState(0);
+  const [expandedAgent, setExpandedAgent] = useState<string | null>(null);
 
   // Progress counter during loading
   useEffect(() => {
@@ -36,6 +53,7 @@ export default function AnalizaPage() {
     if (!sym.trim()) return;
     setState("loading");
     setResult(null);
+    setExpandedAgent(null);
 
     try {
       const res = await fetch("/api/analyze", {
@@ -130,7 +148,7 @@ export default function AnalizaPage() {
         {/* ── Error ── */}
         {state === "error" && (
           <div className={styles.errorBlock}>
-            <span className={styles.errorIcon}>⚠</span>
+            <span className={styles.errorIcon}><WarningIcon /></span>
             <p>{s.errorMsg}</p>
           </div>
         )}
@@ -172,6 +190,32 @@ export default function AnalizaPage() {
               <p className="muted" style={{ fontSize: "0.9rem" }}>{result.error}</p>
             )}
 
+            {/* Analyst breakdown accordion */}
+            {result.analyst_reports && Object.keys(result.analyst_reports).length > 0 && (
+              <div className={styles.analystsBlock}>
+                <p className="eyebrow">{agentLabels.analystsLabel}</p>
+                <div className={styles.agentList}>
+                  {Object.entries(result.analyst_reports).map(([key, report]) => (
+                    <div key={key} className={styles.agentItem}>
+                      <button
+                        className={styles.agentHeader}
+                        onClick={() => setExpandedAgent(expandedAgent === key ? null : key)}
+                        aria-expanded={expandedAgent === key}
+                      >
+                        <span className={styles.agentName}>
+                          {agentLabels.agents[key as keyof typeof agentLabels.agents] || key}
+                        </span>
+                        <ChevronIcon expanded={expandedAgent === key} />
+                      </button>
+                      {expandedAgent === key && (
+                        <p className={styles.agentReport}>{report}</p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* News */}
             {result.news && result.news.length > 0 && (
               <div className={styles.newsBlock}>
@@ -190,5 +234,44 @@ export default function AnalizaPage() {
         )}
       </div>
     </div>
+  );
+}
+
+function ChevronIcon({ expanded }: { expanded: boolean }) {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      style={{
+        transition: "transform 0.2s ease",
+        transform: expanded ? "rotate(180deg)" : "rotate(0deg)",
+      }}
+    >
+      <polyline points="6 9 12 15 18 9" />
+    </svg>
+  );
+}
+
+function WarningIcon() {
+  return (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+      <line x1="12" y1="9" x2="12" y2="13" />
+      <line x1="12" y1="17" x2="12.01" y2="17" />
+    </svg>
   );
 }

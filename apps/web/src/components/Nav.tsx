@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LogoWordmark } from "./Logo";
@@ -9,6 +10,7 @@ import styles from "./Nav.module.css";
 export default function Nav() {
   const pathname = usePathname();
   const { t, locale, setLocale, theme, toggleTheme } = useApp();
+  const [isOpen, setIsOpen] = useState(false);
 
   const links = [
     { href: "/analiza",    label: t.nav.analiza },
@@ -18,52 +20,114 @@ export default function Nav() {
     { href: "/onboarding", label: t.nav.onboarding },
   ];
 
+  // Close menu on route change
+  useEffect(() => {
+    setIsOpen(false);
+  }, [pathname]);
+
+  // Close on Escape key
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    if (e.key === "Escape") setIsOpen(false);
+  }, []);
+
+  useEffect(() => {
+    if (isOpen) {
+      document.addEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = "";
+    };
+  }, [isOpen, handleKeyDown]);
+
   return (
-    <nav className={styles.nav} role="navigation" aria-label="Primarna navigacija">
-      <div className={styles.inner}>
-        <Link href="/" className={styles.logo} aria-label="CheggieTrade početna">
-          <LogoWordmark />
-        </Link>
+    <>
+      <nav className={styles.nav} role="navigation" aria-label="Primarna navigacija">
+        <div className={styles.inner}>
+          <Link href="/" className={styles.logo} aria-label="CheggieTrade početna">
+            <LogoWordmark />
+          </Link>
 
-        <ul className={styles.links} role="list">
-          {links.map(({ href, label }) => (
-            <li key={href}>
-              <Link
-                href={href}
-                className={`${styles.link} ${(pathname === href || pathname?.startsWith(`${href}/`)) ? styles.active : ""}`}
-              >
-                {label}
-              </Link>
-            </li>
-          ))}
-        </ul>
+          <ul className={styles.links} role="list">
+            {links.map(({ href, label }) => (
+              <li key={href}>
+                <Link
+                  href={href}
+                  className={`${styles.link} ${(pathname === href || pathname?.startsWith(`${href}/`)) ? styles.active : ""}`}
+                >
+                  {label}
+                </Link>
+              </li>
+            ))}
+          </ul>
 
-        <div className={styles.controls}>
-          {/* Language toggle — cycles sr → es → en → sr */}
-          <button
-            className={styles.toggle}
-            onClick={() => setLocale(locale === "sr" ? "es" : locale === "es" ? "en" : "sr")}
-            aria-label="Switch language"
-          >
-            {locale === "sr" ? "ES" : locale === "es" ? "EN" : "SR"}
-          </button>
+          <div className={styles.controls}>
+            {/* Language toggle — cycles sr → es → en → sr */}
+            <button
+              className={styles.toggle}
+              onClick={() => setLocale(locale === "sr" ? "es" : locale === "es" ? "en" : "sr")}
+              aria-label="Switch language"
+            >
+              {locale === "sr" ? "ES" : locale === "es" ? "EN" : "SR"}
+            </button>
 
-          {/* Theme toggle */}
-          <button
-            className={styles.toggle}
-            onClick={toggleTheme}
-            aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
-          >
-            {theme === "dark" ? <SunIcon /> : <MoonIcon />}
-          </button>
+            {/* Theme toggle */}
+            <button
+              className={styles.toggle}
+              onClick={toggleTheme}
+              aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+            >
+              {theme === "dark" ? <SunIcon /> : <MoonIcon />}
+            </button>
 
-          {/* CTA */}
-          <Link href="/analiza" className={styles.cta}>
+            {/* CTA - desktop only */}
+            <Link href="/analiza" className={styles.cta}>
+              {t.nav.cta}
+            </Link>
+
+            {/* Hamburger - mobile only */}
+            <button
+              className={styles.hamburger}
+              onClick={() => setIsOpen(!isOpen)}
+              aria-label={isOpen ? "Close menu" : "Open menu"}
+              aria-expanded={isOpen}
+            >
+              <span className={`${styles.hamburgerLine} ${isOpen ? styles.open : ""}`} />
+              <span className={`${styles.hamburgerLine} ${isOpen ? styles.open : ""}`} />
+              <span className={`${styles.hamburgerLine} ${isOpen ? styles.open : ""}`} />
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      {/* Mobile overlay */}
+      <div
+        className={`${styles.overlay} ${isOpen ? styles.overlayOpen : ""}`}
+        aria-hidden={!isOpen}
+      >
+        <div className={styles.overlayContent}>
+          <ul className={styles.overlayLinks} role="list">
+            {links.map(({ href, label }) => (
+              <li key={href}>
+                <Link
+                  href={href}
+                  className={`${styles.overlayLink} ${(pathname === href || pathname?.startsWith(`${href}/`)) ? styles.overlayActive : ""}`}
+                  onClick={() => setIsOpen(false)}
+                >
+                  {label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+          <Link href="/analiza" className={styles.overlayCta} onClick={() => setIsOpen(false)}>
             {t.nav.cta}
           </Link>
         </div>
       </div>
-    </nav>
+    </>
   );
 }
 

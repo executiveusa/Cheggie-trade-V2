@@ -1,8 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap');
-
 /* ═══════════════════════════════════════════════════════════════
    CHEGGIETRADE DESIGN SYSTEM
    Tokens → dark default, [data-theme="light"] overrides
+   Fonts loaded via next/font in layout.tsx
    ═══════════════════════════════════════════════════════════════ */
 
 :root {
@@ -30,10 +29,10 @@
   --success: #00c896;
   --info:    #3d9df6;
 
-  /* Typography */
-  --font-display: 'Space Grotesk', system-ui, sans-serif;
-  --font-body:    'Inter', system-ui, sans-serif;
-  --font-mono:    'JetBrains Mono', 'Fira Code', monospace;
+  /* Typography - CSS vars set by next/font in layout.tsx */
+  --font-display: var(--font-display, 'Space Grotesk', system-ui, sans-serif);
+  --font-body:    var(--font-body, 'Inter', system-ui, sans-serif);
+  --font-mono:    var(--font-mono, 'JetBrains Mono', 'Fira Code', monospace);
 
   /* 8pt grid spacing */
   --sp-1:  0.5rem;   /* 8px  */
