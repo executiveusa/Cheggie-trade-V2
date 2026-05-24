@@ -226,6 +226,200 @@
 /* ── Use Cases ────────────────────────────────────────────────── */
 .useCasesSection { background: var(--bg-alt); }
 
+/* ── Live Demo ────────────────────────────────────────────────── */
+.demoSection {
+  background: var(--bg);
+}
+
+.demoHeader {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-8);
+}
+
+.demoTitle {
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  font-weight: 500;
+  color: var(--text-1);
+  letter-spacing: -0.02em;
+}
+
+.demoSubtitle {
+  font-size: 1rem;
+  color: var(--text-2);
+  font-weight: 300;
+  max-width: 50ch;
+}
+
+.demoResult {
+  max-width: 800px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-6);
+  padding: var(--sp-6);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.demoResultHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: var(--sp-4);
+}
+
+.demoTicker {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 2rem;
+  font-weight: 500;
+  color: var(--text-1);
+  letter-spacing: 0.06em;
+}
+
+.demoName {
+  display: block;
+  font-size: 0.875rem;
+  color: var(--text-2);
+  margin-top: 4px;
+}
+
+.demoPrice {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.demoPriceValue {
+  font-family: var(--font-mono);
+  font-size: 1.8rem;
+  font-weight: 500;
+  color: var(--text-1);
+  font-variant-numeric: tabular-nums;
+}
+
+.demoDivider {
+  height: 1px;
+  background: var(--border);
+}
+
+.demoSignal {
+  padding: var(--sp-5);
+  background: var(--accent-faint);
+  border: 1px solid rgba(0, 200, 150, 0.2);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.demoDecision {
+  font-size: 1rem;
+  color: var(--text-1);
+  line-height: 1.75;
+  font-weight: 300;
+  max-width: none;
+}
+
+.demoAnalysts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.demoAgentList {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.demoAgentItem {
+  border-bottom: 1px solid var(--border);
+}
+
+.demoAgentItem:last-child {
+  border-bottom: none;
+}
+
+.demoAgentHeader {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--sp-3) var(--sp-4);
+  background: none;
+  border: none;
+  color: var(--text-1);
+  cursor: pointer;
+  transition: background 0.15s var(--ease);
+}
+
+.demoAgentHeader:hover {
+  background: var(--bg-alt);
+}
+
+.demoAgentName {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.demoAgentReport {
+  padding: 0 var(--sp-4) var(--sp-4);
+  font-size: 0.875rem;
+  color: var(--text-2);
+  line-height: 1.7;
+  font-weight: 300;
+  max-width: none;
+}
+
+.demoNews {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.demoNewsList {
+  display: flex;
+  flex-direction: column;
+}
+
+.demoNewsItem {
+  padding: var(--sp-3) 0;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.demoNewsItem:last-child {
+  border-bottom: none;
+}
+
+.demoNewsTitle {
+  font-size: 0.9375rem;
+  color: var(--text-1);
+  line-height: 1.5;
+  font-weight: 400;
+  max-width: none;
+}
+
+.demoCta {
+  margin-top: var(--sp-8);
+}
+
+/* ── Use Cases List ───────────────────────────────────────────── */
+
 .useCasesList {
   margin-top: var(--sp-8);
   display: grid;
@@ -249,8 +443,12 @@
 .useCase:hover { background: var(--surface); }
 
 .useCaseIcon {
-  font-size: 1.5rem;
-  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  color: var(--accent);
 }
 
 .useCaseTitle {

@@ -25,13 +25,30 @@ interface Result {
 
 const EXAMPLES = ["AAPL", "NVDA", "TSLA", "MSFT", "SPY"];
 
+const AGENT_LABELS = {
+  sr: {
+    analystsLabel: "Analiza po agentima",
+    agents: { market: "Tržište", news: "Vesti", fundamentals: "Fundamentali", risk: "Rizik" },
+  },
+  es: {
+    analystsLabel: "Análisis por agentes",
+    agents: { market: "Mercado", news: "Noticias", fundamentals: "Fundamentos", risk: "Riesgo" },
+  },
+  en: {
+    analystsLabel: "Analysis by agents",
+    agents: { market: "Market", news: "News", fundamentals: "Fundamentals", risk: "Risk" },
+  },
+};
+
 export default function AnalizaPage() {
-  const { t } = useApp();
+  const { t, locale } = useApp();
   const s = t.analiza;
+  const agentLabels = AGENT_LABELS[locale];
   const [ticker, setTicker] = useState("");
   const [state, setState] = useState<State>("idle");
   const [result, setResult] = useState<Result | null>(null);
   const [elapsed, setElapsed] = useState(0);
+  const [expandedAgent, setExpandedAgent] = useState<string | null>(null);
 
   useEffect(() => {
     if (state !== "loading") { setElapsed(0); return; }
@@ -43,6 +60,7 @@ export default function AnalizaPage() {
     if (!sym.trim()) return;
     setState("loading");
     setResult(null);
+    setExpandedAgent(null);
 
     try {
       const res = await fetch("/api/analyze", {
@@ -133,8 +151,8 @@ export default function AnalizaPage() {
 
         {state === "error" && (
           <div className={styles.errorBlock}>
-            <span className={styles.errorIcon}>⚠</span>
-            <p>Unable to analyze {ticker}. Please try another symbol.</p>
+            <span className={styles.errorIcon}><WarningIcon /></span>
+            <p>{s.errorMsg}</p>
           </div>
         )}
 
@@ -249,6 +267,7 @@ export default function AnalizaPage() {
               </div>
             )}
 
+
             {result.news && result.news.length > 0 && (
               <div className={styles.newsBlock}>
                 <p className="eyebrow">📰 Recent News</p>
@@ -273,5 +292,44 @@ export default function AnalizaPage() {
         )}
       </div>
     </div>
+  );
+}
+
+function ChevronIcon({ expanded }: { expanded: boolean }) {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      style={{
+        transition: "transform 0.2s ease",
+        transform: expanded ? "rotate(180deg)" : "rotate(0deg)",
+      }}
+    >
+      <polyline points="6 9 12 15 18 9" />
+    </svg>
+  );
+}
+
+function WarningIcon() {
+  return (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+      <line x1="12" y1="9" x2="12" y2="13" />
+      <line x1="12" y1="17" x2="12.01" y2="17" />
+    </svg>
   );
 }
