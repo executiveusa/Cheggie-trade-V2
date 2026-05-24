@@ -6,16 +6,24 @@ import styles from "./page.module.css";
 
 type State = "idle" | "loading" | "done" | "error";
 
+interface Analysis {
+  dcf: any;
+  comps: any;
+  technical: any;
+  thesis: any;
+}
+
 interface Result {
+  ok: boolean;
   ticker: string;
   snapshot: { name?: string; price?: number; change_pct?: number; sector?: string };
-  decision?: string;
-  analyst_reports?: Record<string, string>;
+  analysis?: Analysis;
+  recommendation?: string;
   news?: Array<{ title: string; source: string; published_at: string; url?: string }>;
   error?: string;
 }
 
-const EXAMPLES = ["AAPL", "NVDA", "TSLA", "BTC-USD", "SPY"];
+const EXAMPLES = ["AAPL", "NVDA", "TSLA", "MSFT", "SPY"];
 
 export default function AnalizaPage() {
   const { t } = useApp();
@@ -25,7 +33,6 @@ export default function AnalizaPage() {
   const [result, setResult] = useState<Result | null>(null);
   const [elapsed, setElapsed] = useState(0);
 
-  // Progress counter during loading
   useEffect(() => {
     if (state !== "loading") { setElapsed(0); return; }
     const timer = setInterval(() => setElapsed((e) => e + 1), 1000);
@@ -41,13 +48,14 @@ export default function AnalizaPage() {
       const res = await fetch("/api/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ticker: sym.trim().toUpperCase(), analysts: ["market", "news", "fundamentals"] }),
+        body: JSON.stringify({ ticker: sym.trim().toUpperCase() }),
       });
-      if (!res.ok) throw new Error();
       const data = await res.json();
+      if (!data.ok) throw new Error(data.error || "Analysis failed");
       setResult(data);
       setState("done");
-    } catch {
+    } catch (err) {
+      console.error(err);
       setState("error");
     }
   }
@@ -58,18 +66,17 @@ export default function AnalizaPage() {
   }
 
   const isPositive = (result?.snapshot?.change_pct ?? 0) >= 0;
+  const analysis = result?.analysis;
 
   return (
     <div className={styles.page}>
       <div className="container">
-        {/* ── Header ── */}
         <div className={styles.header}>
           <span className="eyebrow">{s.eyebrow}</span>
           <h1 className={styles.title}>{s.title}</h1>
           <p className={styles.subtitle}>{s.subtitle}</p>
         </div>
 
-        {/* ── Input ── */}
         <form className={styles.form} onSubmit={onSubmit}>
           <div className={styles.inputWrap}>
             <input
@@ -89,11 +96,10 @@ export default function AnalizaPage() {
             type="submit"
             disabled={!ticker.trim() || state === "loading"}
           >
-            {state === "loading" ? s.loading : s.cta}
+            {state === "loading" ? `Analyzing... ${elapsed}s` : "Analyze"}
           </button>
         </form>
 
-        {/* ── Example tickers ── */}
         {state === "idle" && (
           <div className={styles.examples}>
             {EXAMPLES.map((ex) => (
@@ -108,12 +114,11 @@ export default function AnalizaPage() {
           </div>
         )}
 
-        {/* ── Loading state ── */}
         {state === "loading" && (
           <div className={styles.loadingBlock}>
             <div className={styles.loadingBar} />
             <div className={styles.loadingAgents}>
-              {s.loadingAgents.map((a, i) => (
+              {["📊 DCF Model", "🔍 Comparables", "📈 Technical", "🎯 Thesis"].map((a, i) => (
                 <span
                   key={a}
                   className={styles.loadingAgent}
@@ -123,22 +128,18 @@ export default function AnalizaPage() {
                 </span>
               ))}
             </div>
-            <p className={styles.loadingMeta}>{elapsed}s</p>
           </div>
         )}
 
-        {/* ── Error ── */}
         {state === "error" && (
           <div className={styles.errorBlock}>
             <span className={styles.errorIcon}>⚠</span>
-            <p>{s.errorMsg}</p>
+            <p>Unable to analyze {ticker}. Please try another symbol.</p>
           </div>
         )}
 
-        {/* ── Result ── */}
         {state === "done" && result && (
           <div className={styles.result}>
-            {/* Ticker header */}
             <div className={styles.resultHeader}>
               <div>
                 <span className={styles.resultTicker}>{result.ticker}</span>
@@ -160,24 +161,99 @@ export default function AnalizaPage() {
 
             <div className={styles.resultDivider} />
 
-            {/* Decision / signal */}
-            {result.decision && (
-              <div className={styles.signalBlock}>
-                <p className={`eyebrow`}>{s.decisionLabel}</p>
-                <p className={styles.decisionText}>{result.decision}</p>
+            {result.recommendation && (
+              <div className={styles.recommendationBlock}>
+                <div className={styles.recommendationBadge}>
+                  {result.recommendation}
+                </div>
               </div>
             )}
 
-            {result.error && !result.decision && (
-              <p className="muted" style={{ fontSize: "0.9rem" }}>{result.error}</p>
+            {analysis?.thesis && (
+              <div className={styles.valuationSection}>
+                <h3 className="eyebrow">💰 Valuation Analysis</h3>
+                <div className={styles.valuationGrid}>
+                  <div className={styles.valuationBox}>
+                    <span className={styles.label}>DCF Fair Value</span>
+                    <span className={styles.value}>${analysis.dcf.fair_value}</span>
+                    <span className={styles.meta}>{analysis.dcf.upside > 0 ? "+" : ""}{analysis.dcf.upside}% upside</span>
+                  </div>
+                  <div className={styles.valuationBox}>
+                    <span className={styles.label}>Comps Fair Value</span>
+                    <span className={styles.value}>${analysis.comps.fair_value_estimate}</span>
+                    <span className={styles.meta}>{analysis.comps.upside > 0 ? "+" : ""}{analysis.comps.upside}% upside</span>
+                  </div>
+                  <div className={styles.valuationBox}>
+                    <span className={styles.label}>Fair Value Range</span>
+                    <span className={styles.value}>${analysis.thesis.fair_value_range[0]} - ${analysis.thesis.fair_value_range[1]}</span>
+                    <span className={styles.meta}>Based on multiple methods</span>
+                  </div>
+                </div>
+              </div>
             )}
 
-            {/* News */}
+            {analysis?.technical && (
+              <div className={styles.technicalSection}>
+                <h3 className="eyebrow">📈 Technical Setup</h3>
+                <div className={styles.technicalGrid}>
+                  <div className={styles.techItem}>
+                    <span className={styles.label}>RSI (14)</span>
+                    <span className={styles.value}>{analysis.technical.rsi}</span>
+                    <span className={styles.meta}>{analysis.technical.rsi_signal}</span>
+                  </div>
+                  <div className={styles.techItem}>
+                    <span className={styles.label}>52-Week Range</span>
+                    <span className={styles.value}>${analysis.technical["52w_low"]} - ${analysis.technical["52w_high"]}</span>
+                    <span className={styles.meta}>{analysis.technical.trend}</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {analysis?.thesis && (
+              <div className={styles.thesisSection}>
+                <h3 className="eyebrow">🎯 Investment Thesis</h3>
+                <div className={styles.caseGrid}>
+                  <div className={styles.bullCase}>
+                    <span className={styles.caseIcon}>🟢</span>
+                    <h4>{analysis.thesis.bull_case.title}</h4>
+                    <p className={styles.caseThesis}>{analysis.thesis.bull_case.thesis}</p>
+                    <div className={styles.catalysts}>
+                      {analysis.thesis.bull_case.catalysts.map((c: string) => (
+                        <span key={c} className={styles.catalyst}>{c}</span>
+                      ))}
+                    </div>
+                    <div className={styles.casePrice}>
+                      <span className={styles.label}>Upside Target</span>
+                      <span className={styles.priceTarget}>${analysis.thesis.bull_case.target_price}</span>
+                      <span className={styles.priceUpside}>+{analysis.thesis.bull_case.upside}%</span>
+                    </div>
+                  </div>
+
+                  <div className={styles.bearCase}>
+                    <span className={styles.caseIcon}>🔴</span>
+                    <h4>{analysis.thesis.bear_case.title}</h4>
+                    <p className={styles.caseThesis}>{analysis.thesis.bear_case.thesis}</p>
+                    <div className={styles.risks}>
+                      {analysis.thesis.bear_case.risks.map((r: string) => (
+                        <span key={r} className={styles.risk}>{r}</span>
+                      ))}
+                    </div>
+                    <div className={styles.casePrice}>
+                      <span className={styles.label}>Downside Target</span>
+                      <span className={styles.priceTarget}>${analysis.thesis.bear_case.downside_target}</span>
+                      <span className={styles.priceDownside}>{analysis.thesis.bear_case.downside}%</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {result.news && result.news.length > 0 && (
               <div className={styles.newsBlock}>
-                <p className="eyebrow">{s.newsLabel}</p>
+                <p className="eyebrow">📰 Recent News</p>
                 <div className={styles.newsList}>
-                  {result.news.slice(0, 5).map((item, i) => (
+                  {result.news.slice(0, 3).map((item, i) => (
                     <div key={i} className={styles.newsItem}>
                       <p className={styles.newsTitle}>{item.title}</p>
                       <span className={`tertiary mono`} style={{ fontSize: "0.75rem" }}>{item.source}</span>
@@ -186,6 +262,13 @@ export default function AnalizaPage() {
                 </div>
               </div>
             )}
+
+            <div className={styles.disclaimer}>
+              <p className="small">
+                <strong>Disclaimer:</strong> This analysis is for educational purposes only and does not constitute investment advice.
+                Always conduct your own due diligence and consult with a financial advisor before making investment decisions.
+              </p>
+            </div>
           </div>
         )}
       </div>
