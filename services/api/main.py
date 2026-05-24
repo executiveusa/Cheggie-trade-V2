@@ -9,6 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from services.api.data_layer import get_news, get_stock_snapshot
+from services.api.financial_analysis import FinancialAnalyzer
 from services.hermes.financial_skills_adapter import FinancialSkillsAdapter
 from services.hermes.hermes_orchestrator import HermesOrchestrator
 from services.hermes.skills_manifest import get_skill, get_skill_registry
@@ -77,10 +78,50 @@ async def assistant(req: AssistantRequest):
 async def analyze(req: AnalyzeRequest):
     ticker = req.ticker.upper().strip()
     trade_date = req.date or str(date.today())
+
     snapshot = get_stock_snapshot(ticker)
-    news = get_news(ticker, days=7, limit=8)
-    hermes = orchestrator.execute({"intent": "analyze_asset", "params": {"query": f"Analyze {ticker}", "ticker": ticker, "date": trade_date}}, locale="sr-RS")
-    return {"ok": True, "ticker": ticker, "snapshot": snapshot, "news": news, "hermes": hermes, "timestamp": datetime.utcnow().isoformat() + "Z"}
+    news = get_news(ticker, days=7, limit=5)
+
+    # Run financial analysis
+    analyzer = FinancialAnalyzer(ticker)
+    dcf = analyzer.dcf_valuation()
+    comps = analyzer.comparable_analysis()
+    technical = analyzer.technical_analysis()
+    thesis = analyzer.generate_thesis()
+
+    # Determine recommendation based on analysis
+    fair_value_range = thesis.get("fair_value_range", [0, 0])
+    current_price = snapshot.get("price", 0)
+
+    if current_price and fair_value_range[0]:
+        upside = ((fair_value_range[1] / current_price) - 1) * 100
+        downside = ((fair_value_range[0] / current_price) - 1) * 100
+
+        if upside > 15:
+            recommendation = "🟢 BUY - Significant upside"
+        elif upside > 5:
+            recommendation = "🟡 HOLD - Moderate upside"
+        elif downside < -10:
+            recommendation = "🔴 SELL - Significant downside"
+        else:
+            recommendation = "🟡 HOLD - Fairly valued"
+    else:
+        recommendation = "⚠️ Insufficient data"
+
+    return {
+        "ok": True,
+        "ticker": ticker,
+        "snapshot": snapshot,
+        "analysis": {
+            "dcf": dcf,
+            "comps": comps,
+            "technical": technical,
+            "thesis": thesis,
+        },
+        "recommendation": recommendation,
+        "news": news,
+        "timestamp": datetime.utcnow().isoformat() + "Z",
+    }
 
 
 @app.get("/api/status")

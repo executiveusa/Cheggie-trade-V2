@@ -336,3 +336,217 @@
   font-weight: 400;
   max-width: none;
 }
+
+/* ── Recommendation ───────────────────────────────────────────── */
+.recommendationBlock {
+  display: flex;
+  justify-content: center;
+  padding: var(--sp-6);
+  background: var(--surface);
+  border-radius: var(--radius-md);
+}
+
+.recommendationBadge {
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: var(--text-1);
+  padding: var(--sp-3) var(--sp-4);
+  background: rgba(0, 200, 150, 0.1);
+  border: 1px solid rgba(0, 200, 150, 0.3);
+  border-radius: var(--radius-sm);
+}
+
+/* ── Valuation Section ────────────────────────────────────────── */
+.valuationSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.valuationGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--sp-3);
+}
+
+.valuationBox {
+  padding: var(--sp-4);
+  background: var(--surface);
+  border: 1px solid var(--border-alt);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.value {
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: var(--accent);
+  font-family: var(--font-mono);
+}
+
+.meta {
+  font-size: 0.75rem;
+  color: var(--text-2);
+}
+
+/* ── Technical Section ────────────────────────────────────────── */
+.technicalSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.technicalGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: var(--sp-3);
+}
+
+.techItem {
+  padding: var(--sp-4);
+  background: var(--surface);
+  border: 1px solid var(--border-alt);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.levelsList {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-4);
+  margin-top: var(--sp-2);
+}
+
+.levelItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--sp-2) 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.875rem;
+}
+
+.levelItem:last-child {
+  border-bottom: none;
+}
+
+/* ── Thesis Section ───────────────────────────────────────────── */
+.thesisSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+
+.caseGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--sp-4);
+}
+
+.bullCase,
+.bearCase {
+  padding: var(--sp-5);
+  border: 1px solid var(--border-alt);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  background: var(--surface);
+}
+
+.caseIcon {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.bullCase h4,
+.bearCase h4 {
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: var(--text-1);
+}
+
+.caseThesis {
+  font-size: 0.9375rem;
+  color: var(--text-2);
+  line-height: 1.6;
+  max-width: none;
+}
+
+.catalysts,
+.risks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+}
+
+.catalyst,
+.risk {
+  padding: 4px 8px;
+  background: rgba(0, 200, 150, 0.1);
+  color: var(--accent);
+  font-size: 0.75rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(0, 200, 150, 0.2);
+}
+
+.risk {
+  background: rgba(255, 71, 87, 0.08);
+  color: var(--danger);
+  border-color: rgba(255, 71, 87, 0.2);
+}
+
+.casePrice {
+  padding-top: var(--sp-3);
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.priceTarget {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--accent);
+  font-family: var(--font-mono);
+}
+
+.priceUpside {
+  font-size: 0.875rem;
+  color: var(--success);
+  font-weight: 500;
+}
+
+.priceDownside {
+  font-size: 0.875rem;
+  color: var(--danger);
+  font-weight: 500;
+}
+
+/* ── Disclaimer ───────────────────────────────────────────────── */
+.disclaimer {
+  padding: var(--sp-4);
+  background: rgba(100, 150, 200, 0.04);
+  border: 1px solid rgba(100, 150, 200, 0.15);
+  border-radius: var(--radius-md);
+  font-size: 0.75rem;
+  color: var(--text-3);
+  line-height: 1.6;
+}
+
+.disclaimer p {
+  max-width: none;
+  margin: 0;
+}
