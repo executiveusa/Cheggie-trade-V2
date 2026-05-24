@@ -1,6 +1,7 @@
 """CheggieTrade API service."""
 
 import os
+import sys
 from datetime import date, datetime
 from typing import Optional
 
@@ -13,6 +14,10 @@ from services.api.financial_analysis import FinancialAnalyzer
 from services.hermes.financial_skills_adapter import FinancialSkillsAdapter
 from services.hermes.hermes_orchestrator import HermesOrchestrator
 from services.hermes.skills_manifest import get_skill, get_skill_registry
+
+# Add project root to path so nim_client can be imported
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+from nim_client import nim_chat  # noqa: E402
 
 HERMES_MODEL_ID = os.getenv("HERMES_MODEL_ID", "hermes-local")
 RESEARCH_MODEL_ID = os.getenv("RESEARCH_MODEL_ID", "research-local")
@@ -70,8 +75,22 @@ async def run_skill(req: SkillRunRequest):
 @app.post("/api/assistant")
 async def assistant(req: AssistantRequest):
     user_text = next((m.content for m in req.messages if m.role == "user"), "")
-    result = orchestrator.run(user_text, locale=req.locale)
-    return {"ok": True, "mode": "live" if os.getenv("ANTHROPIC_API_KEY") else "demo", "response": result}
+    system_prompt = (
+        "You are Cheggie, an AI trading research assistant. "
+        "Provide concise financial research and analysis. "
+        "Respond in the user's language. "
+        "Always include the disclaimer: this is research, not investment advice."
+    )
+    try:
+        nim_reply = nim_chat(
+            [{"role": m.role, "content": m.content} for m in req.messages],
+            system_prompt=system_prompt,
+            max_tokens=1024,
+        )
+        return {"ok": True, "mode": "nim", "response": {"text": nim_reply}}
+    except Exception:
+        result = orchestrator.run(user_text, locale=req.locale)
+        return {"ok": True, "mode": "live" if os.getenv("ANTHROPIC_API_KEY") else "demo", "response": result}
 
 
 @app.post("/api/analyze")
