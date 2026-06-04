@@ -16,7 +16,7 @@
     "concurrently": "^8.2.2"
   },
   "dependencies": {
-    "next": "^16.2.6",
+    "next": "^15.5.18",
     "react": "^19.2.6"
   }
 }
